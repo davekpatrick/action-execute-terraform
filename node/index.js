@@ -52,7 +52,7 @@ try {
   if ( argSetupVersion !== null && argSetupVersion !== '' ) {
     var setupVersion = argSetupVersion;
   } else {
-    var setupVersion = getVersion(setupProduct, setupDirectory, setupFileName);
+    var setupVersion = getVersion(productName, setupDirectory, setupFileName);
   }
 
 
