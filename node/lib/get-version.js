@@ -45,10 +45,10 @@ module.exports = async function getVersion(setupProduct,setupDirectory, setupFil
   let userAgent = `hashicorp-actions/setup-terraform/${process.env.GITHUB_ACTION_VERSION}`;
   var releaseData = await hashicorpReleases.getRelease(setupProduct, requiredVersion, userAgent);
 
-  core.info('releaseData[' + releaseData + ']');
+  core.info('releaseData[' + JSON.stringify(releaseData) + ']');
   // ------------------------------------
   core.debug('End getVersion');
-  return version;
+  return requiredVersion;
   // ------------------------------------
 }
 // EOF
