@@ -1,0 +1,27 @@
+{
+  "name": "action-release-version",
+  "version": "0.1.0",
+  "description": "A simple introductory action using node.js",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "github",
+    "actions",
+    "release",
+    "version"
+  ],
+  "author": "davekpatrick",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "semver": "^7.3.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davekpatrick/action-learn-javascript-helloworld.git"
+  }
+}
