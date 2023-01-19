@@ -2,15 +2,16 @@
 // ------------------------------------
 // Node.js core modules
 // ------------------------------------
-const fs = require('fs');   // Node's file system module
+const fs   = require('fs');        // Node's file system module
+const os   = require('os');        // Node's operating system module
+const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules
 // ------------------------------------
 const core              = require('@actions/core');          // Microsoft's actions toolkit
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
-const { version } = require('os');
 // ------------------------------------
-//
+// Internal modules
 // ------------------------------------
 module.exports = async function getVersion(setupDirectory, setupFileName) {
   core.debug('Start getVersion');
@@ -18,7 +19,10 @@ module.exports = async function getVersion(setupDirectory, setupFileName) {
   // doc: https://developer.hashicorp.com/terraform/language/expressions/version-constraints
   //      https://www.npmjs.com/package/@hashicorp/js-releases
   // ------------------------------------
-  var setupFile = setupDirectory + '/' + setupFileName;
+  var setupFile = path.format({
+                            dir: setupDirectory,
+                            base: setupFileName
+                          });
   var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
   core.debug('setupFile[' + setupFile + ']');
   var requiredVersion = fs.readFile( setupFile, 'utf8', function (error, data) {
