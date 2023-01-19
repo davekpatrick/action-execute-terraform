@@ -25,19 +25,18 @@ module.exports = async function getVersion(setupDirectory, setupFileName) {
                           });
   var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
   core.info('setupFile[' + setupFile + ']');
-  var requiredVersion = fs.readFile( setupFile, 'utf8', function (error, data) {
-    // locate terraform required_version declaration
-    if (error) {
-      core.setFailed('Unable to read setup file');
-      return;
-    }
-    console.log(data)
-    var matchedData = data.match(versionRegex);
-    core.Info('matchedData[' + matchedData[1] + ']');
-    return matchedData[1];
-  } );
+  try {
+    var setupFileData = fs.readFileSync( setupFile, 'utf8' );
+    core.info('setupFileData[' + setupFileData + ']');
+  } catch (error) {
+    core.setFailed('Unable to read setup file');
+    return;
+  }
+  // locate terraform required_version declaration
+  var setupFileDataMatched = setupFileData.match(versionRegex);
+  requiredVersion = setupFileDataMatched[1];
   if (requiredVersion === null || requiredVersion === '') {
-    core.Info('Unable to locate required_version in setupFile[' + setupFile + '] using latest version');
+    core.info('Unable to locate required_version in setupFile[' + setupFile + '] using latest version');
     version = 'latest';
   } else {
     version =  requiredVersion;
