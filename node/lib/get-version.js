@@ -13,7 +13,7 @@ const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's rele
 // ------------------------------------
 // Internal modules
 // ------------------------------------
-module.exports = async function getVersion(setupDirectory, setupFileName) {
+module.exports = async function getVersion(setupProduct,setupDirectory, setupFileName) {
   core.debug('Start getVersion');
   // ------------------------------------
   // doc: https://developer.hashicorp.com/terraform/language/expressions/version-constraints
@@ -37,11 +37,15 @@ module.exports = async function getVersion(setupDirectory, setupFileName) {
   requiredVersion = setupFileDataMatched[1];
   if (requiredVersion === null || requiredVersion === '') {
     core.info('Unable to locate required_version in setupFile[' + setupFile + '] using latest version');
-    version = 'latest';
-  } else {
-    version =  requiredVersion;
+    requiredVersion = 'latest';
   }
-  core.info('version[' + version + ']');
+  core.info('requiredVersion[' + requiredVersion + ']');
+  // Download metadata for a release using a semver range or "latest"
+  // "latest" is set by default if no range is included
+  let userAgent = `hashicorp-actions/setup-terraform/${process.env.GITHUB_ACTION_VERSION}`;
+  var releaseData = await hashicorpReleases.getRelease(setupProduct, requiredVersion, userAgent);
+
+  core.info('releaseData[' + releaseData + ']');
   // ------------------------------------
   core.debug('End getVersion');
   return version;

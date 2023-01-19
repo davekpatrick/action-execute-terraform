@@ -10,13 +10,15 @@ const semver = require('semver');          // Node's semver package
 // ------------------------------------
 const getVersion     = require('./lib/get-version');
 const setupTerraform = require('./lib/setup-terraform');
+// ------------------------------------
+// Main
+// ------------------------------------
+const productName = 'terraform';
 //
 try {
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = core.getInput('apiToken');
-  const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html
-
-  core.info(`process.env[${JSON.stringify(process.env)}]`);
+  const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
 
   // Ensure we have a usable API token
   if ( argApiToken !== null && argApiToken !== '' ) {
@@ -51,7 +53,7 @@ try {
   if ( argSetupVersion !== null && argSetupVersion !== '' ) {
     var setupVersion = argSetupVersion;
   } else {
-    var setupVersion = getVersion(setupDirectory, setupFileName);
+    var setupVersion = getVersion(setupProduct, setupDirectory, setupFileName);
   }
 
 
