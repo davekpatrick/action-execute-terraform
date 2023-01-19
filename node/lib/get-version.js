@@ -24,14 +24,16 @@ module.exports = async function getVersion(setupDirectory, setupFileName) {
                             base: setupFileName
                           });
   var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
-  core.debug('setupFile[' + setupFile + ']');
+  core.info('setupFile[' + setupFile + ']');
   var requiredVersion = fs.readFile( setupFile, 'utf8', function (error, data) {
     // locate terraform required_version declaration
     if (error) {
       core.setFailed('Unable to read setup file');
       return;
     }
+    console.log(data)
     var matchedData = data.match(versionRegex);
+    core.Info('matchedData[' + matchedData[1] + ']');
     return matchedData[1];
   } );
   if (requiredVersion === null || requiredVersion === '') {
