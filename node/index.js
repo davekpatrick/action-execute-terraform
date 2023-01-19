@@ -16,7 +16,7 @@ try {
   const argApiToken  = core.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html
 
-  core.info(`process.env[${process.env}]`);
+  core.info(`process.env[${JSON.stringify(process.env)}]`);
 
   // Ensure we have a usable API token
   if ( argApiToken !== null && argApiToken !== '' ) {
@@ -55,7 +55,7 @@ try {
   }
 
 
-  
+
   core.setOutput("setupVersion", `${setupVersion}`);
   //
 
