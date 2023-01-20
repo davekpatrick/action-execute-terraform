@@ -33,7 +33,7 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupTerraform(argProductName, setupDirectory, argSetupVersion) {
+module.exports = async function setupTerraform(argProductName, argSetupDirectory, argSetupVersion) {
   actionsCore.debug('Start setupTerraform');
   // ------------------------------------
   // Download and install Terraform binary
@@ -63,19 +63,16 @@ module.exports = async function setupTerraform(argProductName, setupDirectory, a
   // Download the build
   var setupBuildUrl = setupBuild.url;
   actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
-  var downloadDirectory = process.env.GITHUB_WORKSPACE + '/' + setupDirectory
+  var downloadDirectory = process.env.GITHUB_WORKSPACE
   var downloadFilePath  = downloadDirectory + '/' + setupBuild.filename;
   actionsCore.info('downloadDirectory[' + downloadDirectory + ']');
   await releaseData.download(setupBuildUrl, downloadFilePath, userAgent);
   actionsCore.info('Done downloading to ' + downloadFilePath)
   // Verify the build
-  var releaseVerify = await releaseData.verify(downloadFilePath, setupBuild.filename);
-  if (!releaseVerify) {
-    actionsCore.setFailed('Unable to verify release');
-    return;
-  }
+  await releaseData.verify(downloadFilePath, setupBuild.filename);
   // Extract the build
-  let setupPath = releaseData.unpack(downloadDirectory, downloadDirectory);
+  var setupDirectory = process.env.GITHUB_WORKSPACE + '/' + argSetupDirectory
+  let setupPath = releaseData.unpack(downloadDirectory, setupDirectory);
   // ------------------------------------
   actionsCore.debug('End setupTerraform');
   return setupPath;
