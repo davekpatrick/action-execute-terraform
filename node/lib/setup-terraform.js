@@ -9,6 +9,7 @@ const os = require('node:os'); // Node's operating system module
 // External modules
 // ------------------------------------
 const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
+const actionsToolCache  = require('@actions/tool-cache');    // Microsoft's actions toolkit
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // ------------------------------------
@@ -33,7 +34,7 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupTerraform(argProductName, argSetupDirectory, argSetupVersion) {
+module.exports = async function setupTerraform(argProductName, argSetupVersion) {
   actionsCore.debug('Start setupTerraform');
   // ------------------------------------
   // Download and install Terraform binary
@@ -63,21 +64,19 @@ module.exports = async function setupTerraform(argProductName, argSetupDirectory
   // Download the build
   var setupBuildUrl = setupBuild.url;
   actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
-  var downloadDirectory = process.env.GITHUB_WORKSPACE
-  var downloadFilePath  = downloadDirectory + '/' + setupBuild.filename;
-  actionsCore.info('downloadDirectory[' + downloadDirectory + ']');
-  await releaseData.download(setupBuildUrl, downloadFilePath, userAgent);
+  var downloadFilePath = await actionsToolCache.downloadTool(setupBuildUrl);
   actionsCore.info('Done downloading to ' + downloadFilePath)
   // Verify the build
   await releaseData.verify(downloadFilePath, setupBuild.filename);
-  actionsCore.info('Done verifying ' + downloadFilePath)
+  actionsCore.info('Done verifying ' + downloadFilePath);
   // Extract the build
-  var setupDirectory = process.env.GITHUB_WORKSPACE + '/' + argSetupDirectory
+  var setupDirectory = process.env.GITHUB_WORKSPACE
   actionsCore.info('setupDirectory[' + setupDirectory + ']');
-  let setupPath = releaseData.unpack(setupDirectory, downloadFilePath);
+  setupFilePath = await actionsToolCache.extractZip(downloadFilePath, setupDirectory );
+  actionsCore.info('Done extracting to ' + setupFilePath);
   // ------------------------------------
   actionsCore.debug('End setupTerraform');
-  return setupPath;
+  return setupFilePath;
   // ------------------------------------
 }
 // EOF

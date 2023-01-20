@@ -71,24 +71,7 @@ const setupTerraform = require('./lib/setup-terraform');
   actionsCore.exportVariable('TF_CLI_PATH', setupProduct);
   // validate the binary is available
   var pathToBinary = await actionsIo.which(productName, true);
-  // Create listeners to receive output (in memory) as well
-  const stdout = new OutputListener();
-  const stderr = new OutputListener();
-  const listeners = {
-    stdout: stdout.listener,
-    stderr: stderr.listener
-  };
-  // setup arts
-  const args = ['version'];
-  const options = {
-    listeners,
-    ignoreReturnCode: true
-  };
-  // Execute and capture output
-  const exitCode = await exec(pathToBinary, args, options);
-  actionsCore.info(`stdout: ${stdout.contents}`);
-  actionsCore.info(`stderr: ${stderr.contents}`);
-  actionsCore.info(`exitcode: ${exitCode}`);
+
 
 
 
