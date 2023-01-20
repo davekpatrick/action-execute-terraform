@@ -84,6 +84,7 @@ const setupTerraform = require('./lib/setup-terraform');
       actionSExecStdErr += data.toString();
     }
   };
+  options.ignoreReturnCode = true;
   options.cwd = setupProduct['dirPath'];
   // Create command arguments
   let args = ['version'];
