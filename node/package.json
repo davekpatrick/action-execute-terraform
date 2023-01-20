@@ -1,6 +1,6 @@
 {
   "author": "davekpatrick",
-  "name": "action-execute-terraform",
+  "name": "@davekpatrick/action-execute-terraform",
   "version": "0.1.0",
   "description": "A GitHub Action to validate, plan, apply and detroy Hashicorp Terraform open source configuration",
   "main": "index.js",

@@ -1,5 +1,7 @@
 // BOF
 // ------------------------------------
+const package = require('../package.json');
+// ------------------------------------
 // Node.js core modules
 // ------------------------------------
 const fs   = require('fs');        // Node's file system module
@@ -42,7 +44,7 @@ module.exports = async function getVersion(setupProduct,setupDirectory, setupFil
   core.info('requiredVersion[' + requiredVersion + ']');
   // Download metadata for a release using a semver range or "latest"
   // "latest" is set by default if no range is included
-  let userAgent = process.env.npm_package_name + '/' + process.env.npm_package_version;
+  let userAgent = package.name + '/' + package.version;
   core.info('userAgent[' + userAgent + ']')
   var releaseData = await hashicorpReleases.getRelease(setupProduct, requiredVersion, userAgent);
 
