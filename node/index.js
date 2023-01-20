@@ -21,7 +21,7 @@ const setupTerraform = require('./lib/setup-terraform');
 // ------------------------------------
 ( async () => {
   try {
-  const productName = 'terraform';
+  const setupProduct = 'terraform';
   core.info('package[' + packageData.name + ']' + ' version[' + packageData.version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = core.getInput('apiToken');
