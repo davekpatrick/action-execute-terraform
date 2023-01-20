@@ -21,7 +21,7 @@ const setupTerraform = require('./lib/setup-terraform');
 // ------------------------------------
 ( async () => {
   try {
-  const setupProduct = 'terraform';
+  const productName = 'terraform';
   core.info('package[' + packageData.name + ']' + ' version[' + packageData.version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = core.getInput('apiToken');
@@ -63,7 +63,7 @@ const setupTerraform = require('./lib/setup-terraform');
   }
   // Download metadata for a release using a semver range or "latest"
   let userAgent = packageData.name + '/' + packageData.version;
-  let releaseData = await hashicorpReleases.getRelease(setupProduct, requiredVersion, userAgent);
+  let releaseData = await hashicorpReleases.getRelease(productName, requiredVersion, userAgent);
   core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
   var releaseVersion = releaseData.version;
   // Download and setup the Terraform binary
