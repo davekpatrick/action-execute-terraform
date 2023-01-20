@@ -1,5 +1,7 @@
 // BOF
 // ------------------------------------
+const packageConfig = require('../package.json');
+// ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
 
@@ -20,7 +22,7 @@ const setupTerraform = require('./lib/setup-terraform');
 ( async () => {
   try {
   const productName = 'terraform';
-  core.info('package[' + packageData.name + ']' + ' version[' + packageData.version + ']');
+  core.info('package[' + packageConfig.name + ']' + ' version[' + packageConfig.version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = core.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
