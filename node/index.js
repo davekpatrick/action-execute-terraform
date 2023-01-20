@@ -1,7 +1,5 @@
 // BOF
 // ------------------------------------
-const packageData = require('./package.json');
-// ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
 
@@ -61,13 +59,8 @@ const setupTerraform = require('./lib/setup-terraform');
   } else {
     var setupVersion = getVersion(productName, setupDirectory, setupFileName);
   }
-  // Download metadata for a release using a semver range or "latest"
-  let userAgent = packageData.name + '/' + packageData.version;
-  let releaseData = await hashicorpReleases.getRelease(productName, requiredVersion, userAgent);
-  core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
-  var releaseVersion = releaseData.version;
   // Download and setup the Terraform binary
-  var setupVersion = setupTerraform(releaseVersion);
+  var setupVersion = setupTerraform(productName, setupVersion);
   core.info('setupVersion[' + setupVersion + ']')
   core.setOutput("setupVersion", `${setupVersion}`);
 

@@ -1,5 +1,7 @@
 // BOF
 // ------------------------------------
+const packageConfig = require('../package.json');
+// ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
 const os = require('node:os'); // Node's operating system module
@@ -31,13 +33,19 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupTerraform(argSetupVersion) {
+module.exports = async function setupTerraform(argProductName, argSetupVersion) {
   core.debug('Start setupTerraform');
-  core.info('argSetupVersion[' + argSetupVersion + ']');
   // Select the build for the given operating system platform and architecture
   let osArchitecture = getOsArchitecture()
   let osPlatform     = getOsPlatform()
-  var setupBuild     = hashicorpReleases.getBuild(osPlatform, osArchitecture); 
+  core.info('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
+  // Download metadata for a release using a semver range or "latest"
+  let userAgent = packageConfig.name + '/' + packageConfig.version;
+  let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, userAgent);
+  core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
+  var releaseVersion = releaseData.version;
+  // Locate the build for the given operating system platform and architecture
+  var setupBuild = releaseData.getBuild(osPlatform, osArchitecture); 
   core.info('setupBuild[' + JSON.stringify(setupBuild) + ']');
 
 
