@@ -55,11 +55,12 @@ module.exports = async function setupTerraform(argProductName, argSetupVersion) 
   // Download the build
   var setupBuildUrl = setupBuild.url;
   actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
-  await releaseData.download(setupBuildUrl, "/tmp", userAgent);
+  var setupDirectory = process.env.GITHUB_WORKSPACE;
+  await releaseData.download(setupBuildUrl, setupDirectory, userAgent);
   // Verify the build
-  await releaseData.verify("tmp", setupBuild.filename);
+  await releaseData.verify(setupDirectory, setupBuild.filename);
   // Extract the build
-  let setupPath = releaseData.unpack("tmp", "/usr/local/bin")
+  let setupPath = releaseData.unpack(setupDirectory, "/usr/local/bin")
   // ------------------------------------
   actionsCore.debug('End setupTerraform');
   return setupPath;
