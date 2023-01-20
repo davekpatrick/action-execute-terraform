@@ -10,7 +10,7 @@ const core              = require('@actions/core');          // Microsoft's acti
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // ------------------------------------
-module.exports = async function getOsArchitecture() {
+function getOsArchitecture() {
   // doc: https://nodejs.org/api/os.html#os_os_arch
   let architecture = os.arch();
   let osArchitectures = {
@@ -21,7 +21,7 @@ module.exports = async function getOsArchitecture() {
   return osArchitectures[architecture] || architecture;
   // ------------------------------------
 }
-module.exports = async function getOsPlatform() {
+function getOsPlatform() {
   // doc: https://nodejs.org/api/os.html#os_os_platform
   let platform = os.platform();
   let osPlatformMap = {
@@ -35,8 +35,8 @@ module.exports = async function setupTerraform(argSetupVersion) {
   core.debug('Start setupTerraform');
   core.info('argSetupVersion[' + argSetupVersion + ']');
   // Select the build for the given operating system platform and architecture
-  let osArchitecture = os.getOsArchitecture()
-  let osPlatform     = os.getOsPlatform()
+  let osArchitecture = getOsArchitecture()
+  let osPlatform     = getOsPlatform()
   var setupBuild     = hashicorpReleases.getBuild(osPlatform, osArchitecture); 
   core.info('setupBuild[' + JSON.stringify(setupBuild) + ']');
 
