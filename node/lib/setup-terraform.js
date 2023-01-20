@@ -8,7 +8,7 @@ const os = require('node:os'); // Node's operating system module
 // ------------------------------------
 // External modules
 // ------------------------------------
-const core              = require('@actions/core');          // Microsoft's actions toolkit
+const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // ------------------------------------
@@ -34,25 +34,35 @@ function getOsPlatform() {
   // ------------------------------------
 }
 module.exports = async function setupTerraform(argProductName, argSetupVersion) {
-  core.debug('Start setupTerraform');
+  actionsCore.debug('Start setupTerraform');
+  // ------------------------------------
+  // Download and install Terraform binary
+  //
+  // doc: https://developer.hashicorp.com/terraform/language/expressions/version-constraints
+  //      https://www.npmjs.com/package/@hashicorp/js-releases
+  // ------------------------------------
   // Select the build for the given operating system platform and architecture
   let osArchitecture = getOsArchitecture()
   let osPlatform     = getOsPlatform()
-  core.info('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
+  actionsCore.info('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
   // Download metadata for a release using a semver range or "latest"
   let userAgent = packageConfig.name + '/' + packageConfig.version;
   let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, userAgent);
-  core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
+  actionsCore.debug('releaseData[' + JSON.stringify(releaseData) + ']');
   var releaseVersion = releaseData.version;
   // Locate the build for the given operating system platform and architecture
   var setupBuild = releaseData.getBuild(osPlatform, osArchitecture); 
-  core.info('setupBuild[' + JSON.stringify(setupBuild) + ']');
-
-
-  var setupVersion = argSetupVersion;
+  // Download the build
+  var setupBuildUrl = setupBuild.url;
+  actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
+  await releaseData.download(setupBuildUrl, "/tmp", userAgent);
+  // Verify the build
+  await releaseData.verify("tmp", setupBuild.filename);
+  // Extract the build
+  let setupPath = releaseData.unpack("tmp", "/usr/local/bin")
   // ------------------------------------
-  core.debug('End setupTerraform');
-  return setupVersion;
+  actionsCore.debug('End setupTerraform');
+  return setupPath;
   // ------------------------------------
 }
 // EOF

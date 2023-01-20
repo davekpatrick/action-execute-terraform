@@ -8,8 +8,10 @@ const packageConfig = require('../package.json');
 // ------------------------------------
 // External modules
 // ------------------------------------
-const core              = require('@actions/core');          // Microsoft's actions toolkit
+const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
 const github            = require('@actions/github');        // Microsoft's actions github toolkit
+const actionsExec       = require('@actions/exec');          // Microsoft's actions exec toolkit
+const actionsIo         = require('@actions/io');            // Microsoft's actions io toolkit
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // Internal modules
@@ -22,57 +24,78 @@ const setupTerraform = require('./lib/setup-terraform');
 ( async () => {
   try {
   const productName = 'terraform';
-  core.info('package[' + packageConfig.name + ']' + ' version[' + packageConfig.version + ']');
+  actionsCore.info('package[' + packageConfig.name + ']' + ' version[' + packageConfig.version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
-  const argApiToken  = core.getInput('apiToken');
+  const argApiToken  = actionsCore.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
   // Ensure we have a usable API token
   if ( argApiToken !== null && argApiToken !== '' ) {
-    core.debug('API token input provided');
+    actionsCore.debug('API token input provided');
     var apiToken = argApiToken;
   } else if ( envApiToken !== null && envApiToken !== '' ) {
-    core.debug('Environment API token found');
+    actionsCore.debug('Environment API token found');
     var apiToken = envApiToken;
   } else {
-    core.setFailed('No API token found');
+    actionsCore.setFailed('No API token found');
     var apiToken = null;
   }
-  core.setSecret(apiToken); // ensure we don't log the token
+  actionsCore.setSecret(apiToken); // ensure we don't log the token
   // Ensure we have a usable working directory
-  const argSetupDirectory = core.getInput('setupDirectory');
+  const argSetupDirectory = actionsCore.getInput('setupDirectory');
   if ( argSetupDirectory !== null && argSetupDirectory !== '' ) {
     var setupDirectory = argSetupDirectory;
   } else {
     var setupDirectory = process.env.GITHUB_WORKSPACE; // doc: https://docs.github.com/en/actions/reference/environment-variables
   }
-  core.debug('setupDirectory[' + setupDirectory + ']');
+  actionsCore.debug('setupDirectory[' + setupDirectory + ']');
   // Ensure we have a usable setup file
-  const argSetupFileName = core.getInput('setupFileName');
+  const argSetupFileName = actionsCore.getInput('setupFileName');
   if ( argSetupFileName !== null && argSetupFileName !== '' ) {
     var setupFileName = argSetupFileName;
   } else {
-    core.setFailed('No setup file input specified');
+    actionsCore.setFailed('No setup file input specified');
   }
-  core.debug('setupFileName[' + setupFileName + ']');
+  actionsCore.debug('setupFileName[' + setupFileName + ']');
   // Locate the Terraform version to install
-  const argSetupVersion = core.getInput('setupVersion');
+  const argSetupVersion = actionsCore.getInput('setupVersion');
   if ( argSetupVersion !== null && argSetupVersion !== '' ) {
     var setupVersion = argSetupVersion;
   } else {
-    var setupVersion = getVersion(productName, setupDirectory, setupFileName);
+    var setupVersion = await getVersion(productName, setupDirectory, setupFileName);
   }
+  actionsCore.setOutput("setupVersion", `${setupVersion}`);
   // Download and setup the Terraform binary
-  var setupVersion = setupTerraform(productName, setupVersion);
-  core.info('setupVersion[' + setupVersion + ']')
-  core.setOutput("setupVersion", `${setupVersion}`);
+  var setupProduct = await setupTerraform(productName, setupDirectory, setupVersion);
+  actionsCore.info('setupProduct[' + setupProduct + ']')
+  // Export environment variable
+  actionsCore.exportVariable('TF_CLI_PATH', setupProduct);
+  // validate the binary is available
+  var pathToBinary = await actionsIo.which(productName, true);
+  // Create listeners to receive output (in memory) as well
+  const stdout = new OutputListener();
+  const stderr = new OutputListener();
+  const listeners = {
+    stdout: stdout.listener,
+    stderr: stderr.listener
+  };
+  // setup arts
+  const args = ['version'];
+  const options = {
+    listeners,
+    ignoreReturnCode: true
+  };
+  // Execute and capture output
+  const exitCode = await exec(pathToBinary, args, options);
+  actionsCore.info(`stdout: ${stdout.contents}`);
+  actionsCore.info(`stderr: ${stderr.contents}`);
+  actionsCore.info(`exitcode: ${exitCode}`);
 
 
 
-
-  } catch (error) {
+} catch (error) {
   // Should any error occur, the action will fail and the workflow will stop
   // Using the actions toolkit (core) pacakge to log a message and set exit code
-  core.setFailed(error.message);
-  }
+  actionsCore.setFailed(error.message);
+}
 })();
 // EOF
