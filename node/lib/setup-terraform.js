@@ -48,17 +48,31 @@ module.exports = async function setupTerraform(argProductName, setupDirectory, a
   // Download metadata for a release using a semver range or "latest"
   let userAgent = packageConfig.name + '/' + packageConfig.version;
   let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, userAgent);
+  if (!releaseData) {
+    actionsCore.setFailed('Unable to locate release data for ' + argProductName + ' ' + argSetupVersion);
+    return;
+  }
   actionsCore.debug('releaseData[' + JSON.stringify(releaseData) + ']');
   var releaseVersion = releaseData.version;
   // Locate the build for the given operating system platform and architecture
   var setupBuild = releaseData.getBuild(osPlatform, osArchitecture); 
+  if (!setupBuild) {
+    actionsCore.setFailed('No build found for ' + osPlatform + ' ' + osArchitecture);
+    return;
+  }
   // Download the build
   var setupBuildUrl = setupBuild.url;
   actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
-  var downloadDirectory = process.env.GITHUB_WORKSPACE + '/' + setupDirectory
-  await releaseData.download(setupBuildUrl, downloadDirectory, userAgent);
+  var downloadDirectory = process.env.GITHUB_WORKSPACE + '/' + setupDirectory + '/' + setupBuild.filename
+  actionsCore.info('downloadDirectory[' + downloadDirectory + ']');
+  await releaseData.download(setupBuildUrl, downloadDirectory + '/' + setupBuild.filename, userAgent);
+  actionsCore.info('Done downloading to ' + downloadDirectory + '/' + setupBuild.filename)
   // Verify the build
-  await releaseData.verify(downloadDirectory, setupBuild.filename);
+  var releaseVerify = await releaseData.verify(downloadDirectory, setupBuild.filename);
+  if (!releaseVerify) {
+    actionsCore.setFailed('Unable to verify release');
+    return;
+  }
   // Extract the build
   let setupPath = releaseData.unpack(downloadDirectory, downloadDirectory + '/' + setupBuild.filename);
   // ------------------------------------
