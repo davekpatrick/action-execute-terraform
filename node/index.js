@@ -66,11 +66,12 @@ const setupTerraform = require('./lib/setup-terraform');
   actionsCore.setOutput("setupVersion", `${setupVersion}`);
   // Download and setup the Terraform binary
   var setupProduct = await setupTerraform(productName, setupDirectory, setupVersion);
-  actionsCore.info('setupProduct[' + setupProduct + ']')
+  actionsCore.info('setupProduct[' + JSON.stringify(setupProduct) + ']')
   // Export environment variable
-  actionsCore.exportVariable('TF_CLI_PATH', setupProduct);
+  actionsCore.exportVariable('TF_CLI_PATH', setupProduct['dirPath']);
+  actionsCore.addPath(setupProduct['dirPath']);
   // validate the binary is available
-  var pathToBinary = await actionsIo.which(productName, true);
+  var pathToBinary = await actionsIo.which(setupProduct['filePath'], true);
 
 
 

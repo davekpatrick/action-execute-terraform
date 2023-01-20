@@ -72,11 +72,22 @@ module.exports = async function setupTerraform(argProductName, argSetupDirectory
   // Extract the build
   var setupDirectory = process.env.GITHUB_WORKSPACE + '/' + argSetupDirectory;
   actionsCore.info('setupDirectory[' + setupDirectory + ']');
-  setupFilePath = await actionsToolCache.extractZip(downloadFilePath, setupDirectory );
-  actionsCore.info('Done extracting to ' + setupFilePath);
+  setupPath = await actionsToolCache.extractZip(downloadFilePath, setupDirectory );
+  actionsCore.info('Done extracting to ' + setupPath);
+  if ( osPlatform === 'windows' ) {
+    setupFilePath = setupPath + '/' + argProductName + '.exe';
+  } else {
+    setupFilePath = setupPath + '/' + argProductName;
+  }
+  setupProduct = {
+    version: releaseVersion,
+    dirPath: setupPath,
+    filePath: setupFilePath
+  }
+
   // ------------------------------------
   actionsCore.debug('End setupTerraform');
-  return setupFilePath;
+  return setupProduct;
   // ------------------------------------
 }
 // EOF
