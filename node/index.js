@@ -15,6 +15,7 @@ const setupTerraform = require('./lib/setup-terraform');
 // ------------------------------------
 try {
   const productName = 'terraform';
+  core.info('package[' + process.env.npm_package_name + ']' + ' version[' + process.env.npm_package_version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = core.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
