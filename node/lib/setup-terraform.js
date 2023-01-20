@@ -63,7 +63,7 @@ module.exports = async function setupTerraform(argProductName, setupDirectory, a
   // Download the build
   var setupBuildUrl = setupBuild.url;
   actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
-  var downloadDirectory = process.env.GITHUB_WORKSPACE + '/' + setupDirectory + '/' + setupBuild.filename
+  var downloadDirectory = process.env.GITHUB_WORKSPACE + '/' + setupDirectory
   actionsCore.info('downloadDirectory[' + downloadDirectory + ']');
   await releaseData.download(setupBuildUrl, downloadDirectory + '/' + setupBuild.filename, userAgent);
   actionsCore.info('Done downloading to ' + downloadDirectory + '/' + setupBuild.filename)
@@ -74,7 +74,7 @@ module.exports = async function setupTerraform(argProductName, setupDirectory, a
     return;
   }
   // Extract the build
-  let setupPath = releaseData.unpack(downloadDirectory, downloadDirectory + '/' + setupBuild.filename);
+  let setupPath = releaseData.unpack(downloadDirectory, downloadDirectory);
   // ------------------------------------
   actionsCore.debug('End setupTerraform');
   return setupPath;
