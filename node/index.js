@@ -66,9 +66,9 @@ try {
   core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
   var releaseVersion = releaseData.version;
   // Download and setup the Terraform binary
-  var setupVersion = setupTerraform(releaseVersion);
-  core.info('setupVersion[' + setupVersion + ']')
-  core.setOutput("setupVersion", `${setupVersion}`);
+  //var setupVersion = setupTerraform(releaseVersion);
+  //core.info('setupVersion[' + setupVersion + ']')
+  //core.setOutput("setupVersion", `${setupVersion}`);
 
 
 

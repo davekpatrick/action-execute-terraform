@@ -10,24 +10,28 @@ const core              = require('@actions/core');          // Microsoft's acti
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // ------------------------------------
-function getOsArchitecture() {
+module.exports = async function getOsArchitecture() {
   // doc: https://nodejs.org/api/os.html#os_os_arch
   let architecture = os.arch();
   let osArchitectures = {
     x32: '386',
     x64: 'amd64'
   }
+  // ------------------------------------
   return osArchitectures[architecture] || architecture;
+  // ------------------------------------
 }
 // ------------------------------------
 // ------------------------------------
-function getOsPlatform() {
+module.exports = async function getOsPlatform() {
   // doc: https://nodejs.org/api/os.html#os_os_platform
   let platform = os.platform();
   let osPlatformMap = {
     win32: 'windows'
   }
+  // ------------------------------------
   return osPlatformMap[platform] || platform;
+  // ------------------------------------
 }
 // ------------------------------------
 // ------------------------------------
