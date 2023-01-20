@@ -10,7 +10,7 @@ jobs:
     name: Artifact build
     strategy:
       matrix:
-        operatingSystem: [ubuntu-22.04]
+        operatingSystem: [ubuntu-22.04, windows-2022]
         nodeVersion: [12, 16]
       fail-fast: false
     runs-on: ${{ matrix.operatingSystem }}
