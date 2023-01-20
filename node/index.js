@@ -19,7 +19,8 @@ const setupTerraform = require('./lib/setup-terraform');
 // ------------------------------------
 // Main
 // ------------------------------------
-try {
+( async () => {
+  try {
   const productName = 'terraform';
   core.info('package[' + packageData.name + ']' + ' version[' + packageData.version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
@@ -66,16 +67,17 @@ try {
   core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
   var releaseVersion = releaseData.version;
   // Download and setup the Terraform binary
-  //var setupVersion = setupTerraform(releaseVersion);
-  //core.info('setupVersion[' + setupVersion + ']')
-  //core.setOutput("setupVersion", `${setupVersion}`);
+  var setupVersion = setupTerraform(releaseVersion);
+  core.info('setupVersion[' + setupVersion + ']')
+  core.setOutput("setupVersion", `${setupVersion}`);
 
 
 
 
-} catch (error) {
+  } catch (error) {
   // Should any error occur, the action will fail and the workflow will stop
   // Using the actions toolkit (core) pacakge to log a message and set exit code
   core.setFailed(error.message);
-}
+  }
+})();
 // EOF

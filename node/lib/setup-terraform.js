@@ -21,8 +21,6 @@ module.exports = async function getOsArchitecture() {
   return osArchitectures[architecture] || architecture;
   // ------------------------------------
 }
-// ------------------------------------
-// ------------------------------------
 module.exports = async function getOsPlatform() {
   // doc: https://nodejs.org/api/os.html#os_os_platform
   let platform = os.platform();
@@ -33,8 +31,6 @@ module.exports = async function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-// ------------------------------------
-// ------------------------------------
 module.exports = async function setupTerraform(argSetupVersion) {
   core.debug('Start setupTerraform');
   core.info('argSetupVersion[' + argSetupVersion + ']');
