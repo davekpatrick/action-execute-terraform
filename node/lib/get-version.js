@@ -42,7 +42,8 @@ module.exports = async function getVersion(setupProduct,setupDirectory, setupFil
   core.info('requiredVersion[' + requiredVersion + ']');
   // Download metadata for a release using a semver range or "latest"
   // "latest" is set by default if no range is included
-  let userAgent = `hashicorp-actions/setup-terraform/${process.env.GITHUB_ACTION_VERSION}`;
+  let userAgent = process.env.npm_package_name + '/' + process.env.npm_package_version;
+  core.info('userAgent[' + userAgent + ']')
   var releaseData = await hashicorpReleases.getRelease(setupProduct, requiredVersion, userAgent);
 
   core.info('releaseData[' + JSON.stringify(releaseData) + ']');
