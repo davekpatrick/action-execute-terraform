@@ -72,25 +72,26 @@ const setupTerraform = require('./lib/setup-terraform');
   actionsCore.addPath(setupProduct['dirPath']);
   // validate the binary is available
   var pathToBinary = await actionsIo.which(setupProduct['filePath'], true);
-  // Create listeners to receive output (in memory) as well
-  let myOutput = '';
-  let myError = '';
-  let args = ['version'];
+  // Create listeners to receive output (in memory) 
+  let actionsExecStdOut = '';
+  let actionSExecStdErr = '';
   const options = {};
   options.listeners = {
     stdout: (data) => {
-      myOutput += data.toString();
+      actionsExecStdOut += data.toString();
     },
     stderr: (data) => {
-      myError += data.toString();
+      actionSExecStdErr += data.toString();
     }
   };
   options.cwd = setupProduct['dirPath'];
+  // Create command arguments
+  let args = ['version'];
   // Execute and capture output
-  const exitCode = await actionsExec.exec(pathToBinary, args, options);
-  actionsCore.info(`stdout: ${stdout.contents}`);
-  actionsCore.info(`stderr: ${stderr.contents}`);
-  actionsCore.info(`exitcode: ${exitCode}`);
+  let actionExecExitCode = await actionsExec.exec(pathToBinary, args, options);
+  actionsCore.info(`stdout: ${actionsExecStdOut}`);
+  actionsCore.info(`stderr: ${actionSExecStdErr}`);
+  actionsCore.info(`exitcode: ${actionExecExitCode}`);
 
 
 
