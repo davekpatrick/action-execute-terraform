@@ -64,11 +64,12 @@ module.exports = async function setupTerraform(argProductName, setupDirectory, a
   var setupBuildUrl = setupBuild.url;
   actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
   var downloadDirectory = process.env.GITHUB_WORKSPACE + '/' + setupDirectory
+  var downloadFilePath  = downloadDirectory + '/' + setupBuild.filename;
   actionsCore.info('downloadDirectory[' + downloadDirectory + ']');
-  await releaseData.download(setupBuildUrl, downloadDirectory + '/' + setupBuild.filename, userAgent);
-  actionsCore.info('Done downloading to ' + downloadDirectory + '/' + setupBuild.filename)
+  await releaseData.download(setupBuildUrl, downloadFilePath, userAgent);
+  actionsCore.info('Done downloading to ' + downloadFilePath)
   // Verify the build
-  var releaseVerify = await releaseData.verify(downloadDirectory, setupBuild.filename);
+  var releaseVerify = await releaseData.verify(downloadFilePath, setupBuild.filename);
   if (!releaseVerify) {
     actionsCore.setFailed('Unable to verify release');
     return;
