@@ -1,6 +1,6 @@
 // BOF
 // ------------------------------------
-const package = require('./package.json');
+const packageData = require('./package.json');
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
@@ -21,7 +21,7 @@ const setupTerraform = require('./lib/setup-terraform');
 // ------------------------------------
 try {
   const productName = 'terraform';
-  core.info('package[' + package.name + ']' + ' version[' + package.version + ']');
+  core.info('package[' + packageData.name + ']' + ' version[' + packageData.version + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = core.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
@@ -61,7 +61,7 @@ try {
     var setupVersion = getVersion(productName, setupDirectory, setupFileName);
   }
   // Download metadata for a release using a semver range or "latest"
-  let userAgent = package.name + '/' + package.version;
+  let userAgent = packageData.name + '/' + packageData.version;
   let releaseData = await hashicorpReleases.getRelease(setupProduct, requiredVersion, userAgent);
   core.debug('releaseData[' + JSON.stringify(releaseData) + ']');
   var releaseVersion = releaseData.version;
