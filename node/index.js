@@ -87,7 +87,7 @@ const setupTerraform = require('./lib/setup-terraform');
   };
   options.cwd = setupProduct['dirPath'];
   // Execute and capture output
-  const exitCode = await exec(pathToBinary, args, options);
+  const exitCode = await actionsExec.exec(pathToBinary, args, options);
   actionsCore.info(`stdout: ${stdout.contents}`);
   actionsCore.info(`stderr: ${stderr.contents}`);
   actionsCore.info(`exitcode: ${exitCode}`);
