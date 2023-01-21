@@ -12,12 +12,12 @@ const actionsCore       = require('@actions/core');          // Microsoft's acti
 const github            = require('@actions/github');        // Microsoft's actions github toolkit
 const actionsIo         = require('@actions/io');            // Microsoft's actions io toolkit
 const actionsExec       = require('@actions/exec');          // Microsoft's actions exec toolkit
-const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // Internal modules
 // ------------------------------------
 const getVersion     = require('./lib/get-version');
-const setupProduct = require('./lib/setup-product');
+const setupProduct   = require('./lib/setup-product');
+const runProduct     = require('./lib/run-product');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -72,30 +72,12 @@ const setupProduct = require('./lib/setup-product');
   actionsCore.addPath(setupConfig['dirPath']);
   // validate the binary is available
   var pathToBinary = await actionsIo.which(setupConfig['filePath'], true);
-  // Create listeners to receive output (in memory) 
-  let actionsExecStdOut = '';
-  let actionSExecStdErr = '';
-  const options = {};
-  options.listeners = {
-    stdout: (data) => {
-      actionsExecStdOut += data.toString();
-    },
-    stderr: (data) => {
-      actionSExecStdErr += data.toString();
-    }
-  };
-  options.silent = true;
-  options.ignoreReturnCode = true;
-  options.cwd = setupConfig['dirPath'];
-  // Create command arguments
-  let args = ['version', '-json'];
-  // Execute and capture output
-  let actionExecExitCode = await actionsExec.exec(pathToBinary, args, options);
-  actionsCore.info(`stdout: ${actionsExecStdOut}`);
-  actionsCore.info(`stderr: ${actionSExecStdErr}`);
-  actionsCore.info(`exitcode: ${actionExecExitCode}`);
-
-  
+  actionsCore.info('pathToBinary[' + pathToBinary + ']');
+  // Execute the Terraform binary
+  var returnData = await runProduct(pathToBinary, setupConfig['dirPath'], 'version -json');
+  actionsCore.info('stdout[' + returnData.stdOut + ']');
+  actionsCore.info('stderr[' + returnData.stdErr + ']');
+  actionsCore.info('exitcode[' + returnData.exitCode + ']');
 
 } catch (error) {
   // Should any error occur, the action will fail and the workflow will stop

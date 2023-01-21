@@ -4,7 +4,7 @@ const packageConfig = require('../package.json');
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os = require('node:os'); // Node's operating system module
+const os = require('node:os'); // Node's operating system
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -37,7 +37,7 @@ function getOsPlatform() {
 module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion) {
   actionsCore.debug('Start setupProduct');
   // ------------------------------------
-  // Download and install Terraform binary
+  // Download and install Product binary
   //
   // doc: https://developer.hashicorp.com/terraform/language/expressions/version-constraints
   //      https://www.npmjs.com/package/@hashicorp/js-releases
