@@ -24,6 +24,7 @@ const runProduct     = require('./lib/run-product');
   try {
   const productName = 'terraform';
   actionsCore.info('package[' + packageConfig.name + ']' + ' version[' + packageConfig.version + ']');
+  actionsCore.startGroup('initilaize')
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = actionsCore.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
@@ -57,12 +58,16 @@ const runProduct     = require('./lib/run-product');
   actionsCore.debug('setupFileName[' + setupFileName + ']');
   // Locate the Terraform version to install
   const argSetupVersion = actionsCore.getInput('setupVersion');
+  actionsCore.endGroup();
+  actionsCore.startGroup('Locate the Terraform version to install')
   if ( argSetupVersion !== null && argSetupVersion !== '' ) {
     var setupVersion = argSetupVersion;
   } else {
     var setupVersion = await getVersion(productName, setupDirectory, setupFileName);
   }
   actionsCore.setOutput("setupVersion", `${setupVersion}`);
+  actionsCore.endGroup();
+  actionsCore.startGroup('Download and setup the Terraform binary')
   // Download and setup the Terraform binary
   var setupConfig = await setupProduct(productName, setupDirectory, setupVersion);
   actionsCore.info('setupConfig[' + JSON.stringify(setupConfig) + ']')
@@ -72,22 +77,23 @@ const runProduct     = require('./lib/run-product');
   // validate the binary is available
   var pathToBinary = await actionsIo.which(setupConfig['filePath'], true);
   actionsCore.info('pathToBinary[' + pathToBinary + ']');
+  actionsCore.endGroup();
   // Execute the Terraform binary
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct(pathToBinary, setupConfig['dirPath'], runArguments);
   actionsCore.info('returnData[' + JSON.stringify(runProductData) + ']');
   if ( returnData.exitCode !== 0 ) {
-    actionsCore.setFailed('Binary version validate failed');
+    actionsCore.setFailed('Binary version validation failed');
     return;
   }
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
-  runProductStdOut = JSON.parse(returnData.stdOut);
+  var runProductStdOut = JSON.parse(returnData.stdOut);
   if ( runProductStdOut.terraform_version !== setupConfig['version'] ) {
     actionsCore.setFailed('Binary version does not match requested version');
     return;
   }
   if ( runProductStdOut.terraform_outdated === true ) {
-    actionsCore.notice('The version being used is outdated');
+    actionsCore.warning('The version[' + runProductStdOut.terraform_version + '] being used is outdated');
   }
   actionsCore.info('stdout[' + JSON.stringify(runProductStdOut) + ']');
   actionsCore.info('stderr[' + returnData.stdErr + ']');
