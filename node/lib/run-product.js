@@ -38,7 +38,7 @@ module.exports = async function runProduct(argPathToBinary, argRunDirectory, arg
   };
   // ------------------------------------
   actionsCore.debug('End runProduct');
-  return returnData;
+  return JSON.parse(returnData);
   // ------------------------------------
 }
 // EOF
