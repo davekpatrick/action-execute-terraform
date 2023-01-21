@@ -11,7 +11,6 @@ const packageConfig = require('../package.json');
 const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
 const github            = require('@actions/github');        // Microsoft's actions github toolkit
 const actionsIo         = require('@actions/io');            // Microsoft's actions io toolkit
-const actionsExec       = require('@actions/exec');          // Microsoft's actions exec toolkit
 // ------------------------------------
 // Internal modules
 // ------------------------------------

@@ -9,7 +9,7 @@ const os = require('node:os'); // Node's operating system
 // External modules
 // ------------------------------------
 const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
-const actionsToolCache  = require('@actions/tool-cache');    // Microsoft's actions toolkit
+const actionsExec       = require('@actions/exec');          // Microsoft's actions exec toolkit
 // ------------------------------------
 // ------------------------------------
 module.exports = async function runProduct(argPathToBinary, argRunDirectory, argRunCommandArguments) {
