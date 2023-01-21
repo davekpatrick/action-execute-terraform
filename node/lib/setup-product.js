@@ -79,7 +79,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   } else {
     setupFilePath = setupPath + '/' + argProductName;
   }
-  setupProduct = {
+  setupConfig = {
     version: releaseVersion,
     dirPath: setupPath,
     filePath: setupFilePath
@@ -87,7 +87,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
 
   // ------------------------------------
   actionsCore.debug('End setupProduct');
-  return setupProduct;
+  return setupConfig;
   // ------------------------------------
 }
 // EOF
