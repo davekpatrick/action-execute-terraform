@@ -65,13 +65,13 @@ const setupProduct = require('./lib/setup-product');
   }
   actionsCore.setOutput("setupVersion", `${setupVersion}`);
   // Download and setup the Terraform binary
-  var setupProduct = await setupProduct(productName, setupDirectory, setupVersion);
-  actionsCore.info('setupProduct[' + JSON.stringify(setupProduct) + ']')
+  var setupConfig = await setupProduct(productName, setupDirectory, setupVersion);
+  actionsCore.info('setupConfig[' + JSON.stringify(setupConfig) + ']')
   // Export environment variable
-  actionsCore.exportVariable('TF_CLI_PATH', setupProduct['dirPath']);
-  actionsCore.addPath(setupProduct['dirPath']);
+  actionsCore.exportVariable('TF_CLI_PATH', setupConfig['dirPath']);
+  actionsCore.addPath(setupConfig['dirPath']);
   // validate the binary is available
-  var pathToBinary = await actionsIo.which(setupProduct['filePath'], true);
+  var pathToBinary = await actionsIo.which(setupConfig['filePath'], true);
   // Create listeners to receive output (in memory) 
   let actionsExecStdOut = '';
   let actionSExecStdErr = '';
@@ -86,7 +86,7 @@ const setupProduct = require('./lib/setup-product');
   };
   options.silent = true;
   options.ignoreReturnCode = true;
-  options.cwd = setupProduct['dirPath'];
+  options.cwd = setupConfig['dirPath'];
   // Create command arguments
   let args = ['version', '-json'];
   // Execute and capture output
