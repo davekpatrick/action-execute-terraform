@@ -75,21 +75,21 @@ const runProduct     = require('./lib/run-product');
   // Execute the Terraform binary
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct(pathToBinary, setupConfig['dirPath'], runArguments);
-  var returnData = JSON.parse(JSON.stringify(runProductData, null, 2) );
-  actionsCore.info('returnData[' + JSON.stringify(returnData) + ']');
+  actionsCore.info('returnData[' + JSON.stringify(runProductData) + ']');
   if ( returnData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validate failed');
     return;
   }
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
-  if ( returnData.stdOut.terraform_version !== setupConfig['version'] ) {
+  runProductStdOut = JSON.parse(returnData.stdOut);
+  if ( runProductStdOut.terraform_version !== setupConfig['version'] ) {
     actionsCore.setFailed('Binary version does not match requested version');
     return;
   }
-  if ( returnData.stdOut.terraform_outdated === true ) {
+  if ( runProductStdOut.terraform_outdated === true ) {
     actionsCore.notice('The version being used is outdated');
   }
-  actionsCore.info('stdout[' + returnData.stdOut + ']');
+  actionsCore.info('stdout[' + JSON.stringify(runProductStdOut) + ']');
   actionsCore.info('stderr[' + returnData.stdErr + ']');
 
 } catch (error) {
