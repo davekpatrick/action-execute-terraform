@@ -12,7 +12,7 @@ const actionsCore       = require('@actions/core');          // Microsoft's acti
 const actionsExec       = require('@actions/exec');          // Microsoft's actions exec toolkit
 // ------------------------------------
 // ------------------------------------
-module.exports = async function runProduct(argPathToBinary, argRunDirectory, argRunCommandArguments) {
+module.exports = async function runProduct(argPathToBinary, argRunDirectory, argRunArguments) {
   actionsCore.debug('Start runProduct');
   // Create listeners to receive output (in memory) 
   let actionsExecStdOut = '';
@@ -30,7 +30,7 @@ module.exports = async function runProduct(argPathToBinary, argRunDirectory, arg
   options.ignoreReturnCode = true;
   options.cwd = argRunDirectory;
   // Execute and capture output
-  let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunCommandArguments, options);
+  let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, options);
   returnData = {
     'stdOut': actionsExecStdOut,  
     'stdErr': actionSExecStdErr,

@@ -73,7 +73,8 @@ const runProduct     = require('./lib/run-product');
   var pathToBinary = await actionsIo.which(setupConfig['filePath'], true);
   actionsCore.info('pathToBinary[' + pathToBinary + ']');
   // Execute the Terraform binary
-  var returnData = await runProduct(pathToBinary, setupConfig['dirPath'], 'version -json');
+  let runArguments = ['version', '-json'];
+  var returnData = await runProduct(pathToBinary, setupConfig['dirPath'], runArguments);
   actionsCore.info('stdout[' + returnData.stdOut + ']');
   actionsCore.info('stderr[' + returnData.stdErr + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
