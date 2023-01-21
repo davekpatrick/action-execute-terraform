@@ -15,7 +15,7 @@ inputs:
     required: false
     default: 'terraform'
   setupFileName:
-    description: 'The configuration file that contians the Terraform Block'
+    description: 'The configuration file name that contians the Terraform Block'
     required: false
     default: 'main.tf'
 ## ------------------------------

@@ -34,8 +34,8 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupTerraform(argProductName, argSetupDirectory, argSetupVersion) {
-  actionsCore.debug('Start setupTerraform');
+module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion) {
+  actionsCore.debug('Start setupProduct');
   // ------------------------------------
   // Download and install Terraform binary
   //
@@ -86,7 +86,7 @@ module.exports = async function setupTerraform(argProductName, argSetupDirectory
   }
 
   // ------------------------------------
-  actionsCore.debug('End setupTerraform');
+  actionsCore.debug('End setupProduct');
   return setupProduct;
   // ------------------------------------
 }

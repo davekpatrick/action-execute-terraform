@@ -17,7 +17,7 @@ const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's rele
 // Internal modules
 // ------------------------------------
 const getVersion     = require('./lib/get-version');
-const setupTerraform = require('./lib/setup-terraform');
+const setupProduct = require('./lib/setup-product');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -65,7 +65,7 @@ const setupTerraform = require('./lib/setup-terraform');
   }
   actionsCore.setOutput("setupVersion", `${setupVersion}`);
   // Download and setup the Terraform binary
-  var setupProduct = await setupTerraform(productName, setupDirectory, setupVersion);
+  var setupProduct = await setupProduct(productName, setupDirectory, setupVersion);
   actionsCore.info('setupProduct[' + JSON.stringify(setupProduct) + ']')
   // Export environment variable
   actionsCore.exportVariable('TF_CLI_PATH', setupProduct['dirPath']);
@@ -88,14 +88,14 @@ const setupTerraform = require('./lib/setup-terraform');
   options.ignoreReturnCode = true;
   options.cwd = setupProduct['dirPath'];
   // Create command arguments
-  let args = ['version'];
+  let args = ['version', '-json'];
   // Execute and capture output
   let actionExecExitCode = await actionsExec.exec(pathToBinary, args, options);
   actionsCore.info(`stdout: ${actionsExecStdOut}`);
   actionsCore.info(`stderr: ${actionSExecStdErr}`);
   actionsCore.info(`exitcode: ${actionExecExitCode}`);
 
-
+  
 
 } catch (error) {
   // Should any error occur, the action will fail and the workflow will stop
