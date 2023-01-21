@@ -79,7 +79,7 @@ const runProduct     = require('./lib/run-product');
     actionsCore.setFailed('Binary version validate failed');
     return;
   }
-  if ( returnData.stdOut.terraform_version !== setupVersion ) {
+  if ( returnData.stdOut.terraform_version !== setupConfig['version'] ) {
     actionsCore.setFailed('Binary version does not match requested version');
     return;
   }
