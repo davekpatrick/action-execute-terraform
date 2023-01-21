@@ -75,7 +75,7 @@ const runProduct     = require('./lib/run-product');
   // Execute the Terraform binary
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct(pathToBinary, setupConfig['dirPath'], runArguments);
-  var returnData = JSON.parse(JSON.stringify(runProductData, null, 2)) );
+  var returnData = JSON.parse(JSON.stringify(runProductData, null, 2) );
   actionsCore.info('returnData[' + JSON.stringify(returnData) + ']');
   if ( returnData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validate failed');
