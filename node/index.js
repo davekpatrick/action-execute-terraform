@@ -110,8 +110,8 @@ const runProduct     = require('./lib/run-product');
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
-  actionsCore.startGroup( productName + ' Execution') 
-  actionsCore.info('action[init]');
+  actionsCore.startGroup( 'Execute ' + productName ); 
+  actionsCore.info('command[init]');
 
 
   

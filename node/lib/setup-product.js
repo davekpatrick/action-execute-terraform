@@ -83,7 +83,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
     dirPath: setupPath,
     filePath: setupFilePath
   }
-  actionsCore.info(argProductName + ' product setup complete');
+  actionsCore.info(argProductName + ' product setup completed');
   // ------------------------------------
   actionsCore.debug('End setupProduct');
   return setupConfig;

@@ -15,7 +15,7 @@ module.exports = async function getVersion(argProductName, argSetupDirectory, ar
   // ------------------------------------
   // Locate the product version to install
   // ------------------------------------
-  actionsCore.info('Locating' + argProductName + ' version to install');
+  actionsCore.info('Locating ' + argProductName + ' version to install');
   if ( argProductName === 'terraform' ) {                   
     // doc: https://developer.hashicorp.com/terraform/language/settings    
     var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
