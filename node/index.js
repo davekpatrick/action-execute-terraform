@@ -23,8 +23,10 @@ const runProduct     = require('./lib/run-product');
 ( async () => {
   try {
   const productName = 'terraform';
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup('Initialize')
   actionsCore.info('package[' + packageConfig.name + ']' + ' version[' + packageConfig.version + ']');
-  actionsCore.startGroup('initilaize')
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = actionsCore.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
@@ -59,48 +61,67 @@ const runProduct     = require('./lib/run-product');
   // Locate the Terraform version to install
   const argSetupVersion = actionsCore.getInput('setupVersion');
   actionsCore.endGroup();
-  actionsCore.startGroup('Locate the Terraform version to install')
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup('Determine the ' + productName +' version to setup')
   if ( argSetupVersion !== null && argSetupVersion !== '' ) {
     var setupVersion = argSetupVersion;
   } else {
     var setupVersion = await getVersion(productName, setupDirectory, setupFileName);
   }
-  actionsCore.setOutput("setupVersion", `${setupVersion}`);
+  actionsCore.setOutput("setupVersion",setupVersion);
+  actionsCore.info('setupVersion[' + setupVersion + ']')
   actionsCore.endGroup();
-  actionsCore.startGroup('Download and setup the Terraform binary')
-  // Download and setup the Terraform binary
+  actionsCore.startGroup('Download and setup ' + productName);
+  // Download and setup the product
   var setupConfig = await setupProduct(productName, setupDirectory, setupVersion);
-  actionsCore.info('setupConfig[' + JSON.stringify(setupConfig) + ']')
+  actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   // Export environment variable
+  actionsCore.setOutput("setupPath", setupConfig['dirPath']);
   actionsCore.exportVariable('TF_CLI_PATH', setupConfig['dirPath']);
   actionsCore.addPath(setupConfig['dirPath']);
+  actionsCore.endGroup();
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup('Validate ' + productName + ' binary')
   // validate the binary is available
   var pathToBinary = await actionsIo.which(setupConfig['filePath'], true);
-  actionsCore.info('pathToBinary[' + pathToBinary + ']');
-  actionsCore.endGroup();
-  // Execute the Terraform binary
+  actionsCore.debug('pathToBinary[' + pathToBinary + ']');
+  // Execute a version test
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct(pathToBinary, setupConfig['dirPath'], runArguments);
-  actionsCore.info('returnData[' + JSON.stringify(runProductData) + ']');
+  actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( returnData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validation failed');
     return;
   }
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
+  // ensure we have the version we expect
   var runProductStdOut = JSON.parse(returnData.stdOut);
   if ( runProductStdOut.terraform_version !== setupConfig['version'] ) {
     actionsCore.setFailed('Binary version does not match requested version');
     return;
   }
+  // ensure we running a supported version
   if ( runProductStdOut.terraform_outdated === true ) {
-    actionsCore.warning('The version[' + runProductStdOut.terraform_version + '] being used is outdated');
+    actionsCore.warning('The ' + productName + ' version[' + runProductStdOut.terraform_version + '] being used is outdated');
   }
-  actionsCore.info('stdout[' + JSON.stringify(runProductStdOut) + ']');
-  actionsCore.info('stderr[' + returnData.stdErr + ']');
+  actionsCore.endGroup();
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup( productName + ' Execution') 
+  actionsCore.info('action[init]');
 
+
+  
+  //var runProductStdOut = JSON.parse(returnData.stdOut);
+  //actionsCore.info('exitcode[' + returnData.exitCode + ']');
+  //actionsCore.info('stdout[' + JSON.stringify(runProductStdOut) + ']');
+  //actionsCore.info('stderr[' + returnData.stdErr + ']');
+  actionsCore.endGroup();
 } catch (error) {
   // Should any error occur, the action will fail and the workflow will stop
-  // Using the actions toolkit (core) pacakge to log a message and set exit code
+  // Using the actions toolkit (core) package to log a message and set exit code
   actionsCore.setFailed(error.message);
 }
 })();
