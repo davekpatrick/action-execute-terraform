@@ -10,19 +10,27 @@ const path = require('node:path'); // Node's path module
 const actionsCore = require('@actions/core'); // Microsoft's actions toolkit
 // ------------------------------------
 // ------------------------------------
-module.exports = async function getVersion(setupProduct, setupDirectory, setupFileName) {
+module.exports = async function getVersion(argProductName, argSetupDirectory, argSetupFileName) {
   actionsCore.debug('Start getVersion');
   // ------------------------------------
-  // Locate the Terraform version to install
-  //
-  // doc: 
+  // Locate the product version to install
   // ------------------------------------
+  actionsCore.info('Locating' + argProductName + ' version to install');
+  if ( argProductName === 'terraform' ) {                   
+    // doc: https://developer.hashicorp.com/terraform/language/settings    
+    var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
+  } else {
+    actionsCore.setFailed('Unsupported product[' + argProductName + ']');
+    return;
+  }
+  actionsCore.debug('versionRegex[' + versionRegex + ']');
+  // determine setup file
   var setupFile = path.format({
-                            dir: setupDirectory,
-                            base: setupFileName
-                          });
-  var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
-  actionsCore.info('setupFile[' + setupFile + ']');
+    dir: argSetupDirectory,
+    base: argSetupFileName
+  });
+  actionsCore.debug('setupFile[' + setupFile + ']');
+  // read setup file
   try {
     var setupFileData = fs.readFileSync( setupFile, 'utf8' );
     actionsCore.debug('setupFileData[' + setupFileData + ']');
@@ -30,11 +38,11 @@ module.exports = async function getVersion(setupProduct, setupDirectory, setupFi
     actionsCore.setFailed('Unable to read setup file');
     return;
   }
-  // locate terraform required_version declaration
+  // locate version declaration
   var setupFileDataMatched = setupFileData.match(versionRegex);
-  requiredVersion = setupFileDataMatched[1];
+  requiredVersion = setupFileDataMatched[1]; // 0 is the entire match
   if (requiredVersion === null || requiredVersion === '') {
-    actionsCore.warning('Unable to locate required_version in setupFile[' + setupFile + '] using latest version');
+    actionsCore.warning('Unable to locate ' + argProductName + ' version within setupFile[' + setupFile + '] using latest');
     requiredVersion = 'latest';
   }
   actionsCore.info('requiredVersion[' + requiredVersion + ']');
