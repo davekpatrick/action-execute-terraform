@@ -1,7 +1,7 @@
 # BOF 
 name: 'GitHub Action Execute Terraform'
 author: davekpatrick
-description: 'A GitHub Action to validate, plan, apply and detroy Hashicorp Terraform open source configuration'
+description: 'A GitHub Action to validate, plan, apply and destroy Hashicorp Terraform open source configuration'
 ## ------------------------------
 inputs:
   apiToken:      #
@@ -21,7 +21,9 @@ inputs:
 ## ------------------------------
 outputs:
   setupVersion: #
-    description: 'The installed Terraform CLI version'
+    description: 'The installed Terraform version'
+  setupPath:
+    description: 'Install path to the Terraform binary'
 ## ------------------------------
 branding:
     icon: 'terminal'
