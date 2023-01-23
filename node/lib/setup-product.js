@@ -38,14 +38,13 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   actionsCore.debug('Start setupProduct');
   // ------------------------------------
   // Download and install Product binary
-  //
   // doc: https://developer.hashicorp.com/terraform/language/expressions/version-constraints
   //      https://www.npmjs.com/package/@hashicorp/js-releases
   // ------------------------------------
   // Select the build for the given operating system platform and architecture
   let osArchitecture = getOsArchitecture()
   let osPlatform     = getOsPlatform()
-  actionsCore.info('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
+  actionsCore.debug('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
   // Download metadata for a release using a semver range or "latest"
   let userAgent = packageConfig.name + '/' + packageConfig.version;
   let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, userAgent);
@@ -58,22 +57,22 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   // Locate the build for the given operating system platform and architecture
   var setupBuild = releaseData.getBuild(osPlatform, osArchitecture); 
   if (!setupBuild) {
-    actionsCore.setFailed('No build found for ' + osPlatform + ' ' + osArchitecture);
+    actionsCore.setFailed('No build found for version ' + releaseVersion + ' on ' + osPlatform + '[' + osArchitecture + ']');
     return;
   }
   // Download the build
   var setupBuildUrl = setupBuild.url;
-  actionsCore.info('setupBuildUrl[' + setupBuildUrl + ']');
+  actionsCore.debug('setupBuildUrl[' + setupBuildUrl + ']');
   var downloadFilePath = await actionsToolCache.downloadTool(setupBuildUrl);
-  actionsCore.info('Done downloading to ' + downloadFilePath)
+  actionsCore.debug('downloadFilePath[' + downloadFilePath + ']')
   // Verify the build
   await releaseData.verify(downloadFilePath, setupBuild.filename);
-  actionsCore.info('Done verifying ' + downloadFilePath);
+  actionsCore.info(argProductName + ' downloaded and verified');
   // Extract the build
   var setupDirectory = process.env.GITHUB_WORKSPACE + '/' + argSetupDirectory;
-  actionsCore.info('setupDirectory[' + setupDirectory + ']');
+  actionsCore.debug('setupDirectory[' + setupDirectory + ']');
   setupPath = await actionsToolCache.extractZip(downloadFilePath, setupDirectory );
-  actionsCore.info('Done extracting to ' + setupPath);
+  actionsCore.debug('Extracted to setupPath[' + setupPath + ']');
   if ( osPlatform === 'windows' ) {
     setupFilePath = setupPath + '/' + argProductName + '.exe';
   } else {
@@ -84,7 +83,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
     dirPath: setupPath,
     filePath: setupFilePath
   }
-
+  actionsCore.info(argProductName + ' product setup complete');
   // ------------------------------------
   actionsCore.debug('End setupProduct');
   return setupConfig;
