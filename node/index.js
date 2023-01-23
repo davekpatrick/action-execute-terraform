@@ -65,17 +65,18 @@ const runProduct     = require('./lib/run-product');
   // ------------------------------------
   actionsCore.startGroup('Determine the ' + productName +' version to setup')
   if ( argSetupVersion !== null && argSetupVersion !== '' ) {
-    var setupVersion = argSetupVersion;
+    var requiredVersion = argSetupVersion;
+    actionsCore.info('requiredVersion[' + requiredVersion + ']')
   } else {
-    var setupVersion = await getVersion(productName, setupDirectory, setupFileName);
+    var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
   }
-  actionsCore.setOutput("setupVersion",setupVersion);
-  actionsCore.info('setupVersion[' + setupVersion + ']')
   actionsCore.endGroup();
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
-  var setupConfig = await setupProduct(productName, setupDirectory, setupVersion);
+  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion);
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
+  actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
+  actionsCore.setOutput("setupVersion",setupConfig['version']);
   // Export environment variable
   actionsCore.setOutput("setupPath", setupConfig['dirPath']);
   actionsCore.exportVariable('TF_CLI_PATH', setupConfig['dirPath']);
