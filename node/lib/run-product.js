@@ -1,15 +1,9 @@
 // BOF
 // ------------------------------------
-const packageConfig = require('../package.json');
-// ------------------------------------
-// Node.js built-in modules
-// ------------------------------------
-const os = require('node:os'); // Node's operating system
-// ------------------------------------
 // External modules
 // ------------------------------------
-const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
-const actionsExec       = require('@actions/exec');          // Microsoft's actions exec toolkit
+const actionsCore = require('@actions/core');          // Microsoft's actions toolkit
+const actionsExec = require('@actions/exec');          // Microsoft's actions exec toolkit
 // ------------------------------------
 // ------------------------------------
 module.exports = async function runProduct(argPathToBinary, argRunDirectory, argRunArguments) {
@@ -17,8 +11,8 @@ module.exports = async function runProduct(argPathToBinary, argRunDirectory, arg
   // Create listeners to receive output (in memory) 
   let actionsExecStdOut = '';
   let actionSExecStdErr = '';
-  const options = {};
-  options.listeners = {
+  let actionsExecOptions = {};
+  actionsExecOptions.listeners = {
     stdout: (data) => {
       actionsExecStdOut += data.toString();
     },
@@ -26,11 +20,11 @@ module.exports = async function runProduct(argPathToBinary, argRunDirectory, arg
       actionSExecStdErr += data.toString();
     }
   };
-  options.silent = true;
-  options.ignoreReturnCode = true;
-  options.cwd = argRunDirectory;
+  actionsExecOptions.silent = true;
+  actionsExecOptions.ignoreReturnCode = true;
+  actionsExecOptions.cwd = argRunDirectory;
   // Execute and capture output
-  let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, options);
+  let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, actionsExecOptions);
   returnData = {
     'stdOut': actionsExecStdOut,  
     'stdErr': actionSExecStdErr,
