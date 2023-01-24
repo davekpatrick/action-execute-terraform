@@ -18,7 +18,8 @@ const runProduct = require('./run-product.js');
 // ------------------------------------
 module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, argType) {
   actionsCore.debug('Start terraformFmt');
-  actionsCore.info('Rewrite Terraform configuration files to a canonical format and style')
+  actionsCore.info('Ensure Terraform configuration files are in canonical format and style')
+  actionsCore.info('Type[' + argType + ']');
   // Argument validation
   if ( argType === 'check' ) {
     var runArguments = ['fmt', '-check', '-list=true', '-recursive'];
@@ -40,7 +41,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
         actionsCore.info('file[' + fileList[i] + ']');
       }
     }
-    //
+    // 
     actionsCore.setFailed('Terraform fmt failure');
     return;
   }
