@@ -19,6 +19,8 @@ const runProduct = require('./run-product.js');
 module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, argType) {
   actionsCore.debug('Start terraformFmt');
   actionsCore.info('Format type[' + argType + ']');
+  // setup variables
+  var outputSplitString = '\n';
   // Argument validation
   if ( argType === 'check' ) {
     var runArguments = ['fmt', '-check', '-list=true', '-recursive'];
@@ -33,7 +35,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
   // Format output into a list, removing empty items
-  var returnDataFileList = returnData.stdOut.split(os.EOL).filter(n => n);
+  var returnDataFileList = returnData.stdOut.replaceAll(os.EOL,outputSplitString).split(outputSplitString).filter(n => n);
   // format error message handling
   if ( returnDataFileList.length > 0 ) {
     if ( returnDataFileList.length === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
