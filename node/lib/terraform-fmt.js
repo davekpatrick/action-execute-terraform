@@ -45,10 +45,12 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     var validFormat = true;
   }
   // Log any format issue files
-  for ( let i = 0; i < returnDataFileList.length; i++ ) {
+  if ( returnDataFileList.length > 0 ) {
     actionsCore.info('Invalid file list');
-    if ( returnDataFileList[i] !== '' ) { 
-      actionsCore.info('file[' + returnDataFileList[i] + ']');
+    for ( let i = 0; i < returnDataFileList.length; i++ ) {
+      if ( returnDataFileList[i] !== '' ) { 
+        actionsCore.info('file[' + returnDataFileList[i] + ']');
+      }
     }
   }
   // 
