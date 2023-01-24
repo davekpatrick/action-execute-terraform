@@ -35,12 +35,10 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   // Format output into a list, removing empty items
   var returnDataFileList = returnData.stdOut.split(os.EOL).join('').split('');
   // format error message handling
-  if ( argType === 'check' && returnData.exitCode !== 0 ) {
-    actionsCore.notice('Invalid Terraform configuration file format detected');
-    var validFormat = false;
-  } else if ( argType === 'write' && returnDataFileList.length > 0 ) {
-    actionsCore.notice('Invalid Terraform configuration file format detected');
-    var validFormat = false;
+  if ( returnDataFileList.length > 0 ) {
+    if ( returnDataFileList.length === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
+    actionsCore.notice( returnDataFileList.length + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected');
+    var validFormat = false;  
   } else {
     actionsCore.info('Correctly formatted Terraform configuration')
     var validFormat = true;
