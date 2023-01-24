@@ -10,13 +10,13 @@ const packageConfig = require('../package.json');
 // ------------------------------------
 const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
 const github            = require('@actions/github');        // Microsoft's actions github toolkit
-const actionsIo         = require('@actions/io');            // Microsoft's actions io toolkit
 // ------------------------------------
 // Internal modules
 // ------------------------------------
 const getVersion     = require('./lib/get-version');
 const setupProduct   = require('./lib/setup-product');
 const runProduct     = require('./lib/run-product');
+const terraformFmt   = require('./lib/terraform-fmt');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -41,7 +41,7 @@ const runProduct     = require('./lib/run-product');
     actionsCore.setFailed('No API token found');
     var apiToken = null;
   }
-  actionsCore.setSecret(apiToken); // ensure we don't log the token
+  actionsCore.setSecret(apiToken); // ensure we do not log sensitive data
   // Ensure we have a usable working directory
   const argSetupDirectory = actionsCore.getInput('setupDirectory');
   if ( argSetupDirectory !== null && argSetupDirectory !== '' ) {
@@ -58,8 +58,18 @@ const runProduct     = require('./lib/run-product');
     actionsCore.setFailed('No setup file input specified');
   }
   actionsCore.debug('setupFileName[' + setupFileName + ']');
-  // Locate the Terraform version to install
+  // Locate the version to install
   const argSetupVersion = actionsCore.getInput('setupVersion');
+  // Use the HashiCorp Checkpoint service
+  // src: https://github.com/hashicorp/go-checkpoint
+  const argUseCheckPointService = actionsCore.getInput('useCheckPointService');
+  var useCheckPointService = ( argUseCheckPointService === 'true' ) ? true : false;
+  if ( useCheckPointService === false ) {
+    actionsCore.info('Disabling HashiCorp Checkpoint service');
+    actionsCore.exportVariable('CHECKPOINT_DISABLE', 1);
+  } else {  
+    actionsCore.debug('HashiCorp Checkpoint service enabled');
+  }
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
@@ -85,12 +95,9 @@ const runProduct     = require('./lib/run-product');
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup('Validate ' + productName + ' binary')
-  // validate the binary is available
-  var pathToBinary = await actionsIo.which(setupConfig['filePath'], true);
-  actionsCore.debug('pathToBinary[' + pathToBinary + ']');
   // Execute a version test
   let runArguments = ['version', '-json'];
-  var runProductData = await runProduct(pathToBinary, setupConfig['dirPath'], runArguments);
+  var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( returnData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validation failed');
@@ -110,8 +117,9 @@ const runProduct     = require('./lib/run-product');
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
-  actionsCore.startGroup( 'Execute ' + productName ); 
-  actionsCore.info('command[init]');
+  actionsCore.startGroup( productName + ' format' ); 
+  var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath']);
+  actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
 
 
   

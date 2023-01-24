@@ -8,16 +8,20 @@ inputs:
    description: 'GitHub API token'
    required: false
   setupVersion:  # 
-    description: 'The version of Terraform to setup. If not specified the action will attemp to locate and install the version specified in the configuration file, else it will install the latest avaiable version'
+    description: 'The version of Terraform to setup. If not specified the action will attempt to locate and install the version specified in the configuration file, else it will install the latest avaiable version'
     required: false
   setupDirectory:
-    description: 'The working directory that contians the Terraform root module configuration'
+    description: 'The working directory that contains the Terraform root module configuration'
     required: false
     default: 'terraform'
   setupFileName:
-    description: 'The configuration file name that contians the Terraform Block'
+    description: 'The configuration file name that contains the Terraform Block'
     required: false
     default: 'main.tf'
+  useCheckPointService:
+    description: 'Use the HashiCorp Checkpoint service to check for the availability of new versions and critical security patches'
+    required: false
+    default: 'true'
 ## ------------------------------
 outputs:
   setupVersion: #
