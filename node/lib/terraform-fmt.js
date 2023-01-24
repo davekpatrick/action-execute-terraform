@@ -44,8 +44,8 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   }
   // Log any format issue files
   for ( let i = 0; i < returnDataFileList.length; i++ ) {
-    if ( fileList[i] !== '' ) { 
-      actionsCore.info('file[' + fileList[i] + ']');
+    if ( returnDataFileList[i] !== '' ) { 
+      actionsCore.info('file[' + returnDataFileList[i] + ']');
     }
   }
   // 
