@@ -25,7 +25,8 @@ inputs:
   terraformFmtType:
     description: 'The type of Terraform format to . Options: none, check, write'
     required: false
-    default: 'write'
+    default: 'check'
+  
 ## ------------------------------
 outputs:
   setupVersion: #
