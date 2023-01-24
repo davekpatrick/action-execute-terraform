@@ -32,7 +32,8 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   var runProductData = await runProduct(argPathToBinary, argRunDirectory, runArguments);
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
-  var returnDataFileList = returnData.stdOut.split(os.EOL);
+  // Format output into a list, removing empty items
+  var returnDataFileList = returnData.stdOut.split(os.EOL).join('').split('');
   // format error message handling
   if ( argType === 'check' && returnData.exitCode !== 0 ) {
     actionsCore.notice('Invalid Terraform configuration file format detected');
