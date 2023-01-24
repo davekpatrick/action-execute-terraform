@@ -18,8 +18,7 @@ const runProduct = require('./run-product.js');
 // ------------------------------------
 module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, argType) {
   actionsCore.debug('Start terraformFmt');
-  actionsCore.info('Ensure Terraform configuration files are in canonical format and style')
-  actionsCore.info('Type[' + argType + ']');
+  actionsCore.info('Format type[' + argType + ']');
   // Argument validation
   if ( argType === 'check' ) {
     var runArguments = ['fmt', '-check', '-list=true', '-recursive'];
@@ -31,19 +30,23 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   }
   // Execute and capture output
   var runProductData = await runProduct(argPathToBinary, argRunDirectory, runArguments);
-  actionsCore.info('returnData[' + JSON.stringify(runProductData) + ']');
+  actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
   var returnDataFileList = returnData.stdOut.split(os.EOL);
   // format error message handling
   if ( argType === 'check' && returnData.exitCode !== 0 ) {
-    actionsCore.warning('Invalid Terraform configuration file format detected');
+    actionsCore.notice('Invalid Terraform configuration file format detected');
+    var validFormat = false;
   } else if ( argType === 'write' && returnDataFileList.length > 0 ) {
-    actionsCore.warning('Invalid Terraform configuration file format detected');
+    actionsCore.notice('Invalid Terraform configuration file format detected');
+    var validFormat = false;
   } else {
     actionsCore.info('Correctly formatted Terraform configuration')
+    var validFormat = true;
   }
   // Log any format issue files
   for ( let i = 0; i < returnDataFileList.length; i++ ) {
+    actionsCore.Info('Invalid file list');
     if ( returnDataFileList[i] !== '' ) { 
       actionsCore.info('file[' + returnDataFileList[i] + ']');
     }
@@ -56,6 +59,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     'stdOut': runProductData['stdOut'],  
     'stdErr': runProductData['stdErr'],
     'exitCode': runProductData['exitCode'],
+    'validFormat': validFormat,
   };
   // ------------------------------------
   actionsCore.debug('End terraformFmt');
