@@ -4,7 +4,8 @@ const packageConfig = require('../package.json');
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os = require('node:os'); // Node's operating system
+const os   = require('node:os'); // Node's operating system
+const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -64,19 +65,21 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   var setupBuildUrl = setupBuild.url;
   actionsCore.debug('setupBuildUrl[' + setupBuildUrl + ']');
   var downloadFilePath = await actionsToolCache.downloadTool(setupBuildUrl);
-  actionsCore.debug('downloadFilePath[' + downloadFilePath + ']')
+  actionsCore.info('downloadFilePath[' + downloadFilePath + ']')
   // Verify the build
   await releaseData.verify(downloadFilePath, setupBuild.filename);
   actionsCore.info(argProductName + ' downloaded and verified');
   // Extract the build
-  var setupDirectory = process.env.GITHUB_WORKSPACE + '/' + argSetupDirectory;
-  actionsCore.debug('setupDirectory[' + setupDirectory + ']');
-  setupPath = await actionsToolCache.extractZip(downloadFilePath, setupDirectory );
+  var setupExtractDestinationDirectory = process.env.GITHUB_WORKSPACE + path.sep + argSetupDirectory;
+  var setupExtractSourceFilePath = downloadFilePath + path.sep + setupBuild.filename;
+  actionsCore.debug('setupExtractDestinationDirectory[' + setupExtractDestinationDirectory + ']');
+  actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
+  setupPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, setupExtractDestinationDirectory );
   actionsCore.debug('Extracted to setupPath[' + setupPath + ']');
   if ( osPlatform === 'windows' ) {
-    setupFilePath = setupPath + '/' + argProductName + '.exe';
+    setupFilePath = setupPath + path.sep + argProductName + '.exe';
   } else {
-    setupFilePath = setupPath + '/' + argProductName;
+    setupFilePath = setupPath + path.sep + argProductName;
   }
   setupConfig = {
     version: releaseVersion,
