@@ -71,6 +71,14 @@ const terraformFmt   = require('./lib/terraform-fmt');
     actionsCore.debug('HashiCorp Checkpoint service enabled');
   }
   actionsCore.endGroup();
+  // Terraform fmt options
+  const argTerraformFmtType = actionsCore.getInput('terraformFmtType');
+  if ( argTerraformFmtType !== null && argTerraformFmtType !== '' ) {
+    var terraformFmtType = argTerraformFmtType;
+  } else {
+    actionsCore.setFailed('No terraformFmtType input specified')
+  }
+  actionsCore.debug('terraformFmtType[' + terraformFmtType + ']');
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup('Determine the ' + productName +' version to setup')
@@ -118,15 +126,15 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup( productName + ' format' ); 
-  var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath']);
-  actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
+  if ( terraformFmtType !== 'none' ) {
+    let returnData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
+    actionsCore.debug('returnData[' + JSON.stringify(returnData) + ']');
+    
 
-
-  
-  //var runProductStdOut = JSON.parse(returnData.stdOut);
-  //actionsCore.info('exitcode[' + returnData.exitCode + ']');
-  //actionsCore.info('stdout[' + JSON.stringify(runProductStdOut) + ']');
-  //actionsCore.info('stderr[' + returnData.stdErr + ']');
+    
+  } else {
+    actionsCore.info('Skipping ' + productName + ' format');
+  }
   actionsCore.endGroup();
 } catch (error) {
   // Should any error occur, the action will fail and the workflow will stop

@@ -8,6 +8,15 @@ const actionsExec = require('@actions/exec');          // Microsoft's actions ex
 // ------------------------------------
 module.exports = async function runProduct(argPathToBinary, argRunDirectory, argRunArguments) {
   actionsCore.debug('Start runProduct');
+  // Argument validation
+  if ( argPathToBinary === null || argPathToBinary === '' ) {
+    actionsCore.setFailed('No path to binary provided');
+    return;
+  }
+  if ( argRunDirectory === null || argRunDirectory === '' ) {
+    actionsCore.setFailed('No working directory provided');
+    return;
+  }
   // Create listeners to receive output (in memory) 
   let actionsExecStdOut = '';
   let actionSExecStdErr = '';
@@ -24,6 +33,7 @@ module.exports = async function runProduct(argPathToBinary, argRunDirectory, arg
   actionsExecOptions.ignoreReturnCode = true;
   actionsExecOptions.cwd = argRunDirectory;
   // Execute and capture output
+  actionsCore.debug('processEnv[' + JSON.stringify(process.env) + ']');
   let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, actionsExecOptions);
   returnData = {
     'stdOut': actionsExecStdOut,  

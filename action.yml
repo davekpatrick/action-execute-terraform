@@ -21,7 +21,11 @@ inputs:
   useCheckPointService:
     description: 'Use the HashiCorp Checkpoint service to check for the availability of new versions and critical security patches'
     required: false
-    default: 'false'
+    default: 'true'
+  terraformFmtType:
+    description: 'The type of Terraform format to . Options: none, check, write'
+    required: false
+    default: 'write'
 ## ------------------------------
 outputs:
   setupVersion: #
