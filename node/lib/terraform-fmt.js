@@ -33,7 +33,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
   // Format output into a list, removing empty items
-  var returnDataFileList = returnData.stdOut.split(os.EOL).join('').split('');
+  var returnDataFileList = returnData.stdOut.split(os.EOL).filter(n => n);
   // format error message handling
   if ( returnDataFileList.length > 0 ) {
     if ( returnDataFileList.length === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
