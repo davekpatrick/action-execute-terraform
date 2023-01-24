@@ -5,6 +5,7 @@ const packageConfig = require('../package.json');
 // Node.js built-in modules
 // ------------------------------------
 const os   = require('node:os'); // Node's operating system
+const fs   = require('node:fs'); // Node's file system
 const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules
@@ -65,14 +66,25 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   var setupBuildUrl = setupBuild.url;
   actionsCore.debug('setupBuildUrl[' + setupBuildUrl + ']');
   var downloadFilePath = await actionsToolCache.downloadTool(setupBuildUrl);
-  actionsCore.info('downloadFilePath[' + downloadFilePath + ']')
+  actionsCore.debug('downloadFilePath[' + downloadFilePath + ']')
   // Verify the build
   await releaseData.verify(downloadFilePath, setupBuild.filename);
   actionsCore.info(argProductName + ' downloaded and verified');
   // Extract the build
   var setupExtractDestinationDirectory = process.env.GITHUB_WORKSPACE + path.sep + argSetupDirectory;
-  var setupExtractSourceFilePath = downloadFilePath + path.sep + setupBuild.filename;
   actionsCore.debug('setupExtractDestinationDirectory[' + setupExtractDestinationDirectory + ']');
+  if ( osPlatform === 'windows' ) {
+    var setupExtractSourceFilePath = downloadFilePath + '.zip';
+    fs.rename(downloadFilePath, setupExtractSourceFilePath, (error) => {
+      if (error) {
+        actionsCore.setFailed('Unable to rename file [' + downloadFilePath + '] to [' + setupExtractSourceFilePath + ']');
+        return;
+      }
+      actionsCore.debug('Successfully renamed file[' + setupExtractSourceFilePath + ']')
+    });
+  } else {
+    var setupExtractSourceFilePath = downloadFilePath;
+  }
   actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
   setupPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, setupExtractDestinationDirectory );
   actionsCore.debug('Extracted to setupPath[' + setupPath + ']');
