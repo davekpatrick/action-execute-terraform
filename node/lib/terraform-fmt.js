@@ -49,7 +49,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     actionsCore.info('Invalid file list');
     for ( let i = 0; i < returnDataFileList.length; i++ ) {
       if ( returnDataFileList[i] !== '' ) { 
-        actionsCore.info('file[' + returnDataFileList[i] + ']');
+        actionsCore.info('file[' + String(i).padStart(3, '0') + '][' + returnDataFileList[i] + ']');
       }
     }
   }
