@@ -39,9 +39,11 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     if ( returnDataFileList.length === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
     actionsCore.notice( returnDataFileList.length + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected');
     var validFormat = false;  
+    var numInvalidFiles = returnDataFileList.length;
   } else {
     actionsCore.info('Correctly formatted Terraform configuration')
     var validFormat = true;
+    var numInvalidFiles = 0;
   }
   // Log any format issue files
   if ( returnDataFileList.length > 0 ) {
@@ -60,6 +62,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     'stdErr': runProductData['stdErr'],
     'exitCode': runProductData['exitCode'],
     'validFormat': validFormat,
+    'numInvalidFiles': numInvalidFiles,
   };
   // ------------------------------------
   actionsCore.debug('End terraformFmt');
