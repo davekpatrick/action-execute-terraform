@@ -31,24 +31,27 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   }
   // Execute and capture output
   var runProductData = await runProduct(argPathToBinary, argRunDirectory, runArguments);
-  actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
+  actionsCore.info('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
-  if ( returnData.exitCode !== 0 ) {
+  var returnDataFileList = returnData.stdOut.split(os.EOL);
+  // format error message handling
+  if ( argType === 'check' && returnData.exitCode !== 0 ) {
     actionsCore.warning('Invalid Terraform configuration file format detected');
-    let fileList = returnData.stdOut.split(os.EOL);
-    for ( let i = 0; i < fileList.length; i++ ) {
-      if ( fileList[i] !== '' ) { 
-        actionsCore.info('file[' + fileList[i] + ']');
-      }
+  } else if ( argType === 'write' && returnDataFileList.length > 0 ) {
+    actionsCore.warning('Invalid Terraform configuration file format detected');
+  } else {
+    actionsCore.info('Correctly formatted Terraform configuration')
+  }
+  // Log any format issue files
+  for ( let i = 0; i < returnDataFileList.length; i++ ) {
+    if ( fileList[i] !== '' ) { 
+      actionsCore.info('file[' + fileList[i] + ']');
     }
-    // 
-    actionsCore.setFailed('Terraform fmt failure');
-    return;
   }
   // 
-  
-  
-  
+  // actionsCore.setFailed('Terraform fmt failure');
+  // return; 
+  //
   returnData = {
     'stdOut': runProductData['stdOut'],  
     'stdErr': runProductData['stdErr'],

@@ -129,9 +129,8 @@ const terraformFmt   = require('./lib/terraform-fmt');
   if ( terraformFmtType !== 'none' ) {
     let returnData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
     actionsCore.debug('returnData[' + JSON.stringify(returnData) + ']');
-    
 
-    
+
   } else {
     actionsCore.info('Skipping ' + productName + ' format');
   }
