@@ -21,7 +21,7 @@ inputs:
   useCheckPointService:
     description: 'Use the HashiCorp Checkpoint service to check for the availability of new versions and critical security patches'
     required: false
-    default: 'true'
+    default: 'false'
 ## ------------------------------
 outputs:
   setupVersion: #

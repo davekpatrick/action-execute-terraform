@@ -22,6 +22,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory) {
   var runProductData = await runProduct(argPathToBinary, argRunDirectory, runArguments);
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
+  actionsCore.info('stdout[' + returnData.stdOut + ']');
   if ( returnData.exitCode !== 0 ) {
     actionsCore.setFailed('fmt failed');
     return;
