@@ -29,6 +29,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   }
   // Execute and capture output
   var runProductData = await runProduct(argPathToBinary, argRunDirectory, runArguments);
+  if ( runProductData === undefined ) { return; }
   actionsCore.debug('runProductData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');
   if ( runProductData.exitCode !== 0 && ( argType === 'write' || argType === 'strict' ) ) {

@@ -86,22 +86,14 @@ const terraformFmt   = require('./lib/terraform-fmt');
     var requiredVersion = argSetupVersion;
     actionsCore.info('requiredVersion[' + requiredVersion + ']')
   } else {
-    try {
-      var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
-      if ( requiredVersion === null ) { throw new Error('getVersion() function failure');}
-    } catch (error) {
-      actionsCore.setFailed(error.message);
-    }
+    var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
+    if ( requiredVersion === undefined ) { throw new Error('getVersion failure');}
   }
   actionsCore.endGroup();
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
-  try {
-    var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion);
-    if ( setupConfig === null ) { throw new Error('setupProduct() function failure');}
-  } catch (error) {
-    actionsCore.setFailed(error.message);
-  }
+  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion);
+  if ( setupConfig === undefined ) { throw new Error('setupProduct() function failure');}
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
   actionsCore.setOutput("setupVersion",setupConfig['version']);
@@ -114,13 +106,9 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // ------------------------------------
   actionsCore.startGroup('Validate ' + productName + ' binary')
   // Execute a version test
-  try {
-    let runArguments = ['version', '-json'];
-    var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
-    if ( runProductData === null ) { throw new Error('runProduct() function failure');}
-  } catch (error) {
-    actionsCore.setFailed(error.message);
-  }
+  let runArguments = ['version', '-json'];
+  var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
+  if ( runProductData === undefined ) { throw new Error('runProduct failure');}
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( runProductData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validation failed');
@@ -140,12 +128,8 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // ------------------------------------
   actionsCore.startGroup( productName + ' format' ); 
   if ( terraformFmtType !== 'none' ) {
-    try {
-      var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
-      if ( terraformFmtData === null ) { throw new Error('terraformFmt() function failure'); }
-    } catch (error) {
-      actionsCore.setFailed(error.message);
-    }
+    var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
+    if ( terraformFmtData === undefined ) { throw new Error('terraformFmt failure'); }
     actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
