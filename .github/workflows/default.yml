@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         cd node
-        npm install-clean
+        npm install
     - name: Compile
       run: |
         cd node
