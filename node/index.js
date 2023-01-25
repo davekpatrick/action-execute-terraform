@@ -88,7 +88,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     actionsCore.info('requiredVersion[' + requiredVersion + ']')
   } else {
     var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
-    if ( requiredVersion === undefined ) { throw new Error('getVersion failure');}
+    if ( requiredVersion === undefined ) { return;}
   }
   actionsCore.endGroup();
   actionsCore.startGroup('Download and setup ' + productName);
