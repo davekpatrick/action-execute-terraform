@@ -144,7 +144,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     } catch (error) {
       return;
     }
-    actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
+    actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       const context = github.context;
