@@ -24,9 +24,9 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   // Argument validation
   if ( argType === 'check' ) {
     var runArguments = ['fmt', '-check', '-list=true', '-recursive'];
-  } else if ( argType === 'write' ) {
+  } else if ( argType === 'write' || argType === 'strict' ) {
     var runArguments = ['fmt', '-write=true', '-list=true', '-recursive'];
-  } else {
+  }  else {
     actionsCore.setFailed('Invalid type [' + argType + ']');
     return;
   }
@@ -39,21 +39,30 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   // format error message handling
   if ( returnDataFileList.length > 0 ) {
     if ( returnDataFileList.length === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
-    actionsCore.notice( returnDataFileList.length + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected');
+    // incorrect format message
+    var incorrectFormatMessage = returnDataFileList.length + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected';
+    if ( argType === 'strict' ) {
+      actionsCore.error(incorrectFormatMessage );
+    } else {
+      actionsCore.notice(incorrectFormatMessage);
+    }
     var validFormat = false;  
     var numInvalidFiles = returnDataFileList.length;
-  } else {
-    actionsCore.info('Correctly formatted Terraform configuration')
-    var validFormat = true;
-    var numInvalidFiles = 0;
-  }
-  // Log any format issue files
-  if ( returnDataFileList.length > 0 ) {
+    // log any format issue files
     for ( let i = 0; i < returnDataFileList.length; i++ ) {
       if ( returnDataFileList[i] !== '' ) { 
         actionsCore.info('Invalid file[' + String(i).padStart(3, '0') + '][' + returnDataFileList[i] + ']');
       }
     }
+    // fail if strict
+    if ( argType === 'strict' ) {
+      actionsCore.setFailed('Terraform configuration file format issues must be corrected');
+      return; 
+    }
+  } else {
+    actionsCore.info('Correctly formatted Terraform configuration')
+    var validFormat = true;
+    var numInvalidFiles = 0;
   }
   // 
   // actionsCore.setFailed('Terraform fmt failure');

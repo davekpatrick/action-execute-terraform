@@ -23,9 +23,9 @@ inputs:
     required: false
     default: 'true'
   terraformFmtType:
-    description: 'The type of Terraform format to . Options: none, check, write'
+    description: 'The type of Terraform format to . Options: none, check, write, strict'
     required: false
-    default: 'check'
+    default: 'write'
   
 ## ------------------------------
 outputs:
