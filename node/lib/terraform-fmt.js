@@ -1,7 +1,4 @@
 // BOF
-// terraform fmt -check -write=false -diff=true -recursive
-// terraform fmt -write=false -diff=false -list=true -recursive
-// terraform fmt -write=true -diff=false -list=true -recursive
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
@@ -34,6 +31,10 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   var runProductData = await runProduct(argPathToBinary, argRunDirectory, runArguments);
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + returnData.exitCode + ']');
+  if ( returnData.exitCode !== 0 && ( argType === 'write' || argType === 'strict' ) ) {
+    actionsCore.setFailed('Terraform fmt command execution failure');
+    return;
+  }
   // Format output into a list, removing empty items
   var returnDataFileList = returnData.stdOut.replaceAll(os.EOL,outputSplitString).split(outputSplitString).filter(n => n);
   // format error message handling
@@ -65,10 +66,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     var validFormat = true;
     var numInvalidFiles = 0;
   }
-  // 
-  // actionsCore.setFailed('Terraform fmt failure');
-  // return; 
-  //
+  // setup return data
   returnData = {
     'stdOut': runProductData['stdOut'],  
     'stdErr': runProductData['stdErr'],
