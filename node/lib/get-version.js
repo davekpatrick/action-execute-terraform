@@ -33,11 +33,11 @@ module.exports = async function getVersion(argProductName, argSetupDirectory, ar
   // read setup file
   try {
     var setupFileData = fs.readFileSync( setupFile, 'utf8' );
-    actionsCore.debug('setupFileData[' + setupFileData + ']');
   } catch (error) {
-    actionsCore.setFailed('Unable to read setup file');
+    actionsCore.setFailed('Unable to read setup file[' + setupFile + ']');
     return;
   }
+  actionsCore.debug('setupFileData[' + setupFileData + ']');
   // locate version declaration
   var setupFileDataMatched = setupFileData.match(versionRegex);
   requiredVersion = setupFileDataMatched[1]; // 0 is the entire match
