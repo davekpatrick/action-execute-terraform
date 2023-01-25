@@ -89,7 +89,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     try {
       var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
     } catch (error) {
-      return;
+      throw error;
     }
   }
   actionsCore.endGroup();
@@ -98,7 +98,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   try {
     var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion);
   } catch (error) {
-    return;
+    throw error;
   }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
@@ -116,7 +116,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     let runArguments = ['version', '-json'];
     var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
   } catch (error) {
-    return;
+    throw error;
   }
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( runProductData.exitCode !== 0 ) {
@@ -142,11 +142,57 @@ const terraformFmt   = require('./lib/terraform-fmt');
     try {
       var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
     } catch (error) {
-      return;
+      throw error;
     }
     actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
-
+    if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
+      const context = github.context;
+      const octokit = github.getOctokit(apiToken);
+      // commit inputs
+      const commitMessage = 'Terraform fmt';
+      const commitBranch = context.ref;
+      const commitAuthor = context.actor;
+      const commitEmail = context.actor + '@users.noreply.github.com';
+      const commitFiles = returnData.invalidFiles; 
+      // commit options
+      const commitOptions = {
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        message: commitMessage,
+        branch: commitBranch,
+      };
+      if ( commitAuthor !== null && commitAuthor !== '' ) {
+        commitOptions['author'] = commitAuthor;
+      }
+      if ( commitEmail !== null && commitEmail !== '' ) {
+        commitOptions['email'] = commitEmail;
+      }
+      if ( commitFiles !== null && commitFiles !== '' ) { 
+        commitOptions['files'] = commitFiles;
+      }
+      actionsCore.debug('commitOptions[' + JSON.stringify(commitOptions) + ']');
+      // Create a commit
+      const commitResponse = await octokit.repos.createCommit(commitOptions);
+      actionsCore.debug('commitResponse[' + JSON.stringify(commitResponse) + ']');
+      actionsCore.info('commitSha[' + commitResponse.data.sha + ']')
+      // pull request options
+      const pullRequestOptions = {
+        owner: context.repo.owner,
+        repo: context.repo.repo,
+        title: commitMessage,
+        head: commitBranch,
+        base: commitBranch,
+      };
+      actionsCore.debug('pullRequestOptions[' + JSON.stringify(pullRequestOptions) + ']');
+      // Create a pull request
+      const pullRequestResponse = await octokit.pulls.create(pullRequestOptions);
+      actionsCore.debug('pullRequestResponse[' + JSON.stringify(pullRequestResponse) + ']');
+      actionsCore.info('pullRequestNumber[' + pullRequestResponse.data.number + ']')
+      //
+      // Set the output
+      //actionsCore.setOutput("pullRequestNumber", pullRequestResponse.data.number);
+    }
   } else {
     actionsCore.info('Skipping ' + productName + ' format');
   }
