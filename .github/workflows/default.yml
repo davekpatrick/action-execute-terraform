@@ -60,6 +60,7 @@ jobs:
         nodeVersion: [12, 16]
       fail-fast: false
     runs-on: ${{ matrix.operatingSystem }}
+    needs: [build]
     #
     steps:
       - uses: actions/download-artifact@v3
