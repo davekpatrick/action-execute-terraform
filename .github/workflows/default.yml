@@ -42,7 +42,11 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
-        path: node/dist/
+        path: |
+          node/dist/
+          README.md
+          action.yml
+
   # --------------------------------------------
   test:
     name: Artifact Test
@@ -57,7 +61,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
-          path: node/dist/
       - name: Execute One
         uses: ./
         with:
