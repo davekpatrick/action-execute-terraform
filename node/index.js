@@ -142,7 +142,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     try {
       var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
     } catch (error) {
-      throw error;
+      actionsCore.setFailed(error.message);
     }
     actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
