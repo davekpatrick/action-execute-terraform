@@ -38,14 +38,34 @@ jobs:
       run: |
         cd node
         ncc build index.js --license licenses.txt
-    - name: Execute One
-      uses: ./
+    - name: Publish
+      uses: actions/upload-artifact@v3
       with:
-        apiToken: ${{ secrets.GITHUB_TOKEN }}
-        terraformFmtType: 'strict'
-    - name: Execute Two
-      uses: ./
-      with:
-        apiToken: ${{ secrets.GITHUB_TOKEN }}
-        terraformFmtType: 'write'
+        name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
+        path: node/dist/
+  # --------------------------------------------
+  test:
+    name: Artifact Test
+    strategy:
+      matrix:
+        operatingSystem: [ubuntu-22.04, windows-2022]
+        nodeVersion: [12, 16]
+      fail-fast: false
+    runs-on: ${{ matrix.operatingSystem }}
+    #
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
+          path: node/dist/
+      - name: Execute One
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          terraformFmtType: 'check'
+      - name: Execute Two
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          terraformFmtType: 'write'
 # EOF
