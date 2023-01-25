@@ -38,15 +38,19 @@ jobs:
       run: |
         cd node
         ncc build index.js --license licenses.txt
+    - name: Add Metadata 
+      run: |
+        cd node
+        npm run add-metadata 
     - name: Publish
       uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
         path: |
           node/dist/
+          node/package-lock.json
           README.md
           action.yml
-
   # --------------------------------------------
   test:
     name: Artifact Test
@@ -61,6 +65,9 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
+      - name: Debug
+        run: |
+          ls -lR 
       - name: Execute One
         uses: ./
         with:

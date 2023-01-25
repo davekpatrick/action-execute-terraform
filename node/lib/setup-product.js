@@ -1,7 +1,5 @@
 // BOF
 // ------------------------------------
-const packageConfig = require('../package.json');
-// ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
 const os   = require('node:os'); // Node's operating system
@@ -36,7 +34,7 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion) {
+module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion, argUserAgent) {
   actionsCore.debug('Start setupProduct');
   // ------------------------------------
   // Download and install Product binary
@@ -48,8 +46,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   let osPlatform     = getOsPlatform()
   actionsCore.debug('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
   // Download metadata for a release using a semver range or "latest"
-  let userAgent = packageConfig.name + '/' + packageConfig.version;
-  let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, userAgent);
+  let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, argUserAgent);
   if (!releaseData) {
     actionsCore.setFailed('Unable to locate release data for ' + argProductName + ' ' + argSetupVersion);
     return;

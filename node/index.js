@@ -1,6 +1,7 @@
 // BOF
 // ------------------------------------
-const packageConfig = require('../package.json');
+const packageName    = '@@NPM_PACKAGE_NAME@@';
+const packageVersion = '@@NPM_PACKAGE_VERSION@@';
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
@@ -26,7 +27,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup('Initialize')
-  actionsCore.info('package[' + packageConfig.name + ']' + ' version[' + packageConfig.version + ']');
+  actionsCore.info('package[' + packageName + ']' + ' version[' + packageVersion + ']');
   // NOTE: inputs and outputs are defined in action.yml metadata file
   const argApiToken  = actionsCore.getInput('apiToken');
   const envApiToken  = process.env.GITHUB_TOKEN;  // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
@@ -92,7 +93,8 @@ const terraformFmt   = require('./lib/terraform-fmt');
   actionsCore.endGroup();
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
-  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion);
+  let userAgent = packageName + '/' + packageVersion;
+  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion, userAgent);
   if ( setupConfig === undefined ) { throw new Error('setupProduct() function failure');}
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')

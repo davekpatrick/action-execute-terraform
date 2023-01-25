@@ -2,10 +2,12 @@
   "author": "davekpatrick",
   "name": "@davekpatrick/action-execute-terraform",
   "version": "0.1.0",
-  "description": "A GitHub Action to validate, plan, apply and detroy Hashicorp Terraform open source configuration",
+  "description": "A GitHub Action to validate, plan, apply and destroy Hashicorp Terraform open source configuration",
   "main": "index.js",
   "scripts": {
+    "add-metadata": "replace @@NPM_PACKAGE_NAME@@ $npm_package_name dist/index.js && replace @@NPM_PACKAGE_VERSION@@ $npm_package_version dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+
   },
   "keywords": [
     "node",
@@ -21,6 +23,9 @@
     "@actions/github": "^5.1.1",
     "@actions/tool-cache": "^1.7.0",
     "@hashicorp/js-releases": "^1.6.1"
+  },
+  "devDependencies": {
+    "replace": "^1.2.1"
   },
   "repository": {
     "type": "git",
