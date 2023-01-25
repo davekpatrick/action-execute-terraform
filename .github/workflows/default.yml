@@ -66,8 +66,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
-          path: |
-            tests/
       - name: Debug
         if: ${{ runner.os != 'Windows' }}
         run: |
@@ -82,18 +80,18 @@ jobs:
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: tests/terraform/oldVersion
+          setupDirectory: terraform/oldVersion
           terraformFmtType: 'none'
       - name: Invalid version
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: tests/terraform/invalidVersion
+          setupDirectory: terraform/invalidVersion
           terraformFmtType: 'none'
       - name: Check valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: tests/terraform/validFormat
+          setupDirectory: terraform/validFormat
           terraformFmtType: 'check'
 # EOF
