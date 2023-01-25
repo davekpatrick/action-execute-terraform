@@ -36,6 +36,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
+        if-no-files-found: error 
         path: |
           node/dist/
           node/package-lock.json
@@ -46,7 +47,7 @@ jobs:
         name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
         if-no-files-found: error 
         path: |
-          tests/*
+          tests/
   # --------------------------------------------
   test:
     name: Artifact Test
