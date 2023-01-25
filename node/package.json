@@ -5,7 +5,8 @@
   "description": "A GitHub Action to validate, plan, apply and destroy Hashicorp Terraform open source configuration",
   "main": "index.js",
   "scripts": {
-    "add-metadata": "replace @@NPM_PACKAGE_NAME@@ $npm_package_name dist/index.js && replace @@NPM_PACKAGE_VERSION@@ $npm_package_version dist/index.js",
+    "add-metadata": "cross-var replace @@NPM_PACKAGE_NAME@@ $npm_package_name dist/index.js && cross-var replace @@NPM_PACKAGE_VERSION@@ $npm_package_version dist/index.js",
+    
     "test": "echo \"Error: no test specified\" && exit 1"
 
   },
@@ -25,7 +26,8 @@
     "@hashicorp/js-releases": "^1.6.1"
   },
   "devDependencies": {
-    "replace": "^1.2.1"
+    "replace": "^1.2.1",
+    "cross-var": "^1.1.0"
   },
   "repository": {
     "type": "git",
