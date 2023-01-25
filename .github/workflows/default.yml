@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
   push:
   pull_request:
-  release:
 jobs:
   # --------------------------------------------
   build:
@@ -29,21 +28,12 @@ jobs:
     - name: Install dependencies
       run: |
         cd node
-        npm install
-    - name: Install ncc 
+        npm install-clean
+    - name: Compile
       run: |
         cd node
-        npm i -g @vercel/ncc@0.36.0
-    - name: Compile 
-      run: |
-        cd node
-        ncc build index.js --license licenses.txt
-    - name: Add Metadata 
-      run: |
-        cd node
-        npm run add-metadata 
-    - name: Publish
-      uses: actions/upload-artifact@v3
+        npm run build
+    - uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
         path: |
@@ -51,6 +41,11 @@ jobs:
           node/package-lock.json
           README.md
           action.yml
+    - uses: actions/upload-artifact@v3
+      with:
+        name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+        path: |
+          tests/
   # --------------------------------------------
   test:
     name: Artifact Test
@@ -66,17 +61,25 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
-      - name: Debug
-        run: |
-          ls -lR 
-      - name: Execute One
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+      - name: Old version
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: tests/terraform/oldVersion
+          terraformFmtType: 'none'
+      - name: Invalid version
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: tests/terraform/invalidVersion
+          terraformFmtType: 'none'
+      - name: Check valid format
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: tests/terraform/validFormat
           terraformFmtType: 'check'
-      - name: Execute Two
-        uses: ./
-        with:
-          apiToken: ${{ secrets.GITHUB_TOKEN }}
-          terraformFmtType: 'write'
 # EOF

@@ -6,9 +6,8 @@
   "main": "index.js",
   "scripts": {
     "add-metadata": "cross-var replace @@NPM_PACKAGE_NAME@@ $npm_package_name dist/index.js && cross-var replace @@NPM_PACKAGE_VERSION@@ $npm_package_version dist/index.js",
-    
+    "build": "ncc build index.js --license licenses.txt --out dist && npm run add-metadata",
     "test": "echo \"Error: no test specified\" && exit 1"
-
   },
   "keywords": [
     "node",
@@ -27,7 +26,8 @@
   },
   "devDependencies": {
     "replace": "^1.2.1",
-    "cross-var": "^1.1.0"
+    "cross-var": "^1.1.0",
+    "@vercel/ncc": "^0.36.0"
   },
   "repository": {
     "type": "git",
