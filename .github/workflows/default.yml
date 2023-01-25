@@ -66,6 +66,8 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+          path: |
+            tests/
       - name: Debug
         if: ${{ runner.os != 'Windows' }}
         run: |
