@@ -38,10 +38,14 @@ jobs:
       run: |
         cd node
         ncc build index.js --license licenses.txt
-    - name: Execute 
+    - name: Execute One
       uses: ./
       with:
         apiToken: ${{ secrets.GITHUB_TOKEN }}
         terraformFmtType: 'strict'
-
+    - name: Execute Two
+      uses: ./
+      with:
+        apiToken: ${{ secrets.GITHUB_TOKEN }}
+        terraformFmtType: 'write'
 # EOF
