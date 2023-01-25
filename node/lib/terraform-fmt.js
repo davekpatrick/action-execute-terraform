@@ -42,7 +42,8 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     // incorrect format message
     var incorrectFormatMessage = returnDataFileList.length + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected';
     if ( argType === 'strict' ) {
-      actionsCore.error(incorrectFormatMessage );
+      // just info log it as we are going to setFailed later
+      actionsCore.info(incorrectFormatMessage );
     } else {
       actionsCore.notice(incorrectFormatMessage);
     }
