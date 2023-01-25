@@ -88,8 +88,9 @@ const terraformFmt   = require('./lib/terraform-fmt');
   } else {
     try {
       var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
+      if ( requiredVersion === null ) { throw new Error('getVersion() function failure');}
     } catch (error) {
-      throw error;
+      actionsCore.setFailed(error.message);
     }
   }
   actionsCore.endGroup();
@@ -97,8 +98,9 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // Download and setup the product
   try {
     var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion);
+    if ( setupConfig === null ) { throw new Error('setupProduct() function failure');}
   } catch (error) {
-    throw error;
+    actionsCore.setFailed(error.message);
   }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
@@ -115,20 +117,19 @@ const terraformFmt   = require('./lib/terraform-fmt');
   try {
     let runArguments = ['version', '-json'];
     var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
+    if ( runProductData === null ) { throw new Error('runProduct() function failure');}
   } catch (error) {
-    throw error;
+    actionsCore.setFailed(error.message);
   }
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( runProductData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validation failed');
-    return;
   }
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');
   // ensure we have the version we expect
   var runProductStdOut = JSON.parse(runProductData.stdOut);
   if ( runProductStdOut.terraform_version !== setupConfig['version'] ) {
     actionsCore.setFailed('Binary version does not match requested version');
-    return;
   }
   // ensure we running a supported version
   if ( runProductStdOut.terraform_outdated === true ) {
@@ -141,6 +142,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   if ( terraformFmtType !== 'none' ) {
     try {
       var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
+      if ( terraformFmtData === null ) { throw new Error('terraformFmt() function failure'); }
     } catch (error) {
       actionsCore.setFailed(error.message);
     }
