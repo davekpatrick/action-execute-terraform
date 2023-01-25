@@ -44,8 +44,9 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+        if-no-files-found: error 
         path: |
-          tests/
+          tests/*
   # --------------------------------------------
   test:
     name: Artifact Test
@@ -64,6 +65,16 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+      - name: Debug
+        if: ${{ runner.os != 'Windows' }}
+        run: |
+          ls -lR
+      - name: Debug
+        if: ${{ runner.os == 'Windows' }}
+        shell: powershell
+        run: |
+          Set-Location -Path ./
+          Get-ChildItem -Recurse
       - name: Old version
         uses: ./
         with:
