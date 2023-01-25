@@ -129,7 +129,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   actionsCore.startGroup( productName + ' format' ); 
   if ( terraformFmtType !== 'none' ) {
     var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
-    if ( terraformFmtData === undefined ) { throw new Error('terraformFmt failure'); }
+    if ( terraformFmtData === undefined ) { return; }
     actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
