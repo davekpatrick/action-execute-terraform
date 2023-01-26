@@ -83,11 +83,19 @@ jobs:
           setupDirectory: terraform/oldVersion
           terraformFmtType: 'none'
       - name: Invalid version
+        continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           setupDirectory: terraform/invalidVersion
           terraformFmtType: 'none'
+      - name: Invalid version latest
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: terraform/invalidVersion
+          terraformFmtType: 'none'
+          versionInvalidHandling: 'latest'
       - name: Check valid format
         uses: ./
         with:
