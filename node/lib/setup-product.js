@@ -10,7 +10,7 @@ const path = require('node:path'); // Node's path module
 // ------------------------------------
 const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
 const actionsToolCache  = require('@actions/tool-cache');    // Microsoft's actions toolkit
-const semver            = require('semver/ranges/valid')     // Node's semver module
+const semver            = require('semver')     // Node's semver module
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // ------------------------------------
