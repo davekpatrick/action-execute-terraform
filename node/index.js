@@ -97,6 +97,8 @@ const terraformFmt   = require('./lib/terraform-fmt');
     if ( requiredVersion === undefined ) { return; }
   }
   actionsCore.endGroup();
+  // ------------------------------------
+  // ------------------------------------
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
   let userAgent = packageName + '/' + packageVersion;
@@ -116,7 +118,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // Execute a version test
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
-  if ( runProductData === undefined ) { throw new Error('runProduct failure');}
+  if ( runProductData === undefined ) { return;}
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( runProductData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validation failed');
@@ -138,7 +140,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   if ( terraformFmtType !== 'none' ) {
     var terraformFmtData = await terraformFmt(setupConfig['filePath'], setupConfig['dirPath'], terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
-    actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
+    actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       const context = github.context;
@@ -150,7 +152,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
       const commitEmail = context.actor + '@users.noreply.github.com';
       const commitFiles = returnData.invalidFiles; 
       // commit options
-      const commitOptions = {
+      var commitOptions = {
         owner: context.repo.owner,
         repo: context.repo.repo,
         message: commitMessage,
@@ -165,13 +167,13 @@ const terraformFmt   = require('./lib/terraform-fmt');
       if ( commitFiles !== null && commitFiles !== '' ) { 
         commitOptions['files'] = commitFiles;
       }
-      actionsCore.debug('commitOptions[' + JSON.stringify(commitOptions) + ']');
+      actionsCore.info('commitOptions[' + JSON.stringify(commitOptions) + ']');
       // Create a commit
       const commitResponse = await octokit.repos.createCommit(commitOptions);
       actionsCore.debug('commitResponse[' + JSON.stringify(commitResponse) + ']');
       actionsCore.info('commitSha[' + commitResponse.data.sha + ']')
       // pull request options
-      const pullRequestOptions = {
+      var pullRequestOptions = {
         owner: context.repo.owner,
         repo: context.repo.repo,
         title: commitMessage,
