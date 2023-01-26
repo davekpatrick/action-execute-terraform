@@ -71,6 +71,9 @@ module.exports = async function setupProduct( argProductName,
     var setupVersion = argSetupVersion;
   }
   // Download metadata for a release using a semver range or "latest"
+  if ( argIncludePrerelease)  {
+    actionsCore.info('Including pre-release versions');
+  }
   let releaseData = await hashicorpReleases.getRelease(argProductName, setupVersion, argUserAgent, argIncludePrerelease);
   if (!releaseData) {
     actionsCore.setFailed('Unable to locate release data for ' + argProductName + ' ' + setupVersion);
