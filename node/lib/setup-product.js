@@ -10,6 +10,7 @@ const path = require('node:path'); // Node's path module
 // ------------------------------------
 const actionsCore       = require('@actions/core');          // Microsoft's actions toolkit
 const actionsToolCache  = require('@actions/tool-cache');    // Microsoft's actions toolkit
+const semver            = require('semver/ranges/valid')     // Node's semver module
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
 // ------------------------------------
@@ -34,7 +35,7 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion, argUserAgent) {
+module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion, argVersionInvalidHandling, argUserAgent) {
   actionsCore.debug('Start setupProduct');
   // ------------------------------------
   // Download and install Product binary
@@ -45,10 +46,29 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   let osArchitecture = getOsArchitecture()
   let osPlatform     = getOsPlatform()
   actionsCore.debug('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
+  if (argSetupVersion !== 'latest') {
+    let setupVersionValid = semver.validRange(argSetupVersion, { includePrerelease, loose: true });
+    if (!setupVersionValid) {
+      if ( argVersionInvalidHandling === 'fail' ) {
+        actionsCore.setFailed('Invalid version [' + argSetupVersion + ']');
+        return;
+      } else if ( argVersionInvalidHandling === 'latest' ) {
+        actionsCore.warning('Invalid version [' + argSetupVersion + '] using latest');
+        var setupVersion = 'latest';
+      } else {
+        actionsCore.setFailed('Invalid version[' + argSetupVersion + ']  unknown versionInvalidHandling[' + argVersionInvalidHandling + ']');
+        return;
+      }
+    } else {
+      var setupVersion = argSetupVersion;
+    }
+  } else {
+    var setupVersion = argSetupVersion;
+  }
   // Download metadata for a release using a semver range or "latest"
-  let releaseData = await hashicorpReleases.getRelease(argProductName, argSetupVersion, argUserAgent);
+  let releaseData = await hashicorpReleases.getRelease(argProductName, setupVersion, argUserAgent);
   if (!releaseData) {
-    actionsCore.setFailed('Unable to locate release data for ' + argProductName + ' ' + argSetupVersion);
+    actionsCore.setFailed('Unable to locate release data for ' + argProductName + ' ' + setupVersion);
     return;
   }
   actionsCore.debug('releaseData[' + JSON.stringify(releaseData) + ']');
@@ -90,15 +110,16 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   } else {
     setupFilePath = setupPath + path.sep + argProductName;
   }
-  setupConfig = {
+  actionsCore.info(argProductName + ' product setup completed');
+  // setup return data
+  returnData = {
     version: releaseVersion,
     dirPath: setupPath,
     filePath: setupFilePath
   }
-  actionsCore.info(argProductName + ' product setup completed');
   // ------------------------------------
   actionsCore.debug('End setupProduct');
-  return setupConfig;
+  return returnData;
   // ------------------------------------
 }
 // EOF

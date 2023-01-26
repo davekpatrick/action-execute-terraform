@@ -43,6 +43,21 @@ const terraformFmt   = require('./lib/terraform-fmt');
     var apiToken = null;
   }
   actionsCore.setSecret(apiToken); // ensure we do not log sensitive data
+  // Locate the version to install
+  const argSetupVersion = actionsCore.getInput('setupVersion');
+  // Invalid version handling
+  const argVersionInvalidHandling  = actionsCore.getInput('versionInvalidHandling');
+  var versionInvalidHandling = ( argVersionInvalidHandling === 'fail' ) ? 'fail' : 'latest';
+  // Use the HashiCorp Checkpoint service
+  // src: https://github.com/hashicorp/go-checkpoint
+  const argUseCheckPointService = actionsCore.getInput('useCheckPointService');
+  var useCheckPointService = ( argUseCheckPointService === 'true' ) ? true : false;
+  if ( useCheckPointService === false ) {
+    actionsCore.info('Disabling HashiCorp Checkpoint service');
+    actionsCore.exportVariable('CHECKPOINT_DISABLE', 1);
+  } else {  
+    actionsCore.debug('HashiCorp Checkpoint service enabled');
+  }
   // Ensure we have a usable working directory
   const argSetupDirectory = actionsCore.getInput('setupDirectory');
   if ( argSetupDirectory !== null && argSetupDirectory !== '' ) {
@@ -59,19 +74,6 @@ const terraformFmt   = require('./lib/terraform-fmt');
     actionsCore.setFailed('No setup file input specified');
   }
   actionsCore.debug('setupFileName[' + setupFileName + ']');
-  // Locate the version to install
-  const argSetupVersion = actionsCore.getInput('setupVersion');
-  // Use the HashiCorp Checkpoint service
-  // src: https://github.com/hashicorp/go-checkpoint
-  const argUseCheckPointService = actionsCore.getInput('useCheckPointService');
-  var useCheckPointService = ( argUseCheckPointService === 'true' ) ? true : false;
-  if ( useCheckPointService === false ) {
-    actionsCore.info('Disabling HashiCorp Checkpoint service');
-    actionsCore.exportVariable('CHECKPOINT_DISABLE', 1);
-  } else {  
-    actionsCore.debug('HashiCorp Checkpoint service enabled');
-  }
-  actionsCore.endGroup();
   // Terraform fmt options
   const argTerraformFmtType = actionsCore.getInput('terraformFmtType');
   if ( argTerraformFmtType !== null && argTerraformFmtType !== '' ) {
@@ -80,6 +82,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     actionsCore.setFailed('No terraformFmtType input specified')
   }
   actionsCore.debug('terraformFmtType[' + terraformFmtType + ']');
+  actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup('Determine the ' + productName +' version to setup')
@@ -88,14 +91,14 @@ const terraformFmt   = require('./lib/terraform-fmt');
     actionsCore.info('requiredVersion[' + requiredVersion + ']')
   } else {
     var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
-    if ( requiredVersion === undefined ) { return;}
+    if ( requiredVersion === undefined ) { return; }
   }
   actionsCore.endGroup();
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
   let userAgent = packageName + '/' + packageVersion;
-  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion, userAgent);
-  if ( setupConfig === undefined ) { throw new Error('setupProduct() function failure');}
+  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion, versionInvalidHandling, userAgent);
+  if ( setupConfig === undefined ) { return; }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
   actionsCore.setOutput("setupVersion",setupConfig['version']);

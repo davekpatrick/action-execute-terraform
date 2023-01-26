@@ -33,7 +33,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   actionsCore.debug('runProductData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');
   if ( runProductData.exitCode !== 0 && ( argType === 'write' || argType === 'strict' ) ) {
-    // if we are these mode and we have a non-zero exit code then we have a problem
+    // if we are these modes and have a non-zero exit code then ... a problem has occurred
     actionsCore.info('stderr[' + runProductData.stdErr + ']');
     actionsCore.setFailed('Terraform fmt command execution failure');
     return;

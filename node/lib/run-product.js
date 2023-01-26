@@ -35,6 +35,7 @@ module.exports = async function runProduct(argPathToBinary, argRunDirectory, arg
   // Execute and capture output
   actionsCore.debug('processEnv[' + JSON.stringify(process.env) + ']');
   let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, actionsExecOptions);
+  // setup return data
   returnData = {
     'stdOut': actionsExecStdOut,  
     'stdErr': actionSExecStdErr,

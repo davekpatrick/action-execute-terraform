@@ -4,26 +4,30 @@ author: davekpatrick
 description: 'A GitHub Action to validate, plan, apply and destroy Hashicorp Terraform open source configuration'
 ## ------------------------------
 inputs:
-  apiToken:      #
+  apiToken:
    description: 'GitHub API token'
    required: false
-  setupVersion:  # 
-    description: 'The version of Terraform to setup. If not specified the action will attempt to locate and install the version specified in the configuration file, else it will install the latest avaiable version'
+  setupVersion:
+    description: 'The version of Terraform to setup. If not specified the action will attempt to locate and install the version specified in the configuration file, else it will install the latest available version'
     required: false
+  versionInvalidHandling:
+    description: 'If an invalid version is detected, what action should be taken. Options: fail, latest'
+    required: false
+    default: 'fail'
+  useCheckPointService:
+    description: 'Use the HashiCorp Checkpoint service to check for the availability of new versions and critical security patches'
+    required: false
+    default: 'true'
   setupDirectory:
     description: 'The working directory that contains the Terraform root module configuration'
     required: false
     default: 'terraform'
   setupFileName:
-    description: 'The configuration file name that contains the Terraform Block'
+    description: 'The configuration file name that contains the Terraform block'
     required: false
     default: 'main.tf'
-  useCheckPointService:
-    description: 'Use the HashiCorp Checkpoint service to check for the availability of new versions and critical security patches'
-    required: false
-    default: 'true'
   terraformFmtType:
-    description: 'The type of Terraform format to . Options: none, check, write, strict'
+    description: 'The type of Terraform format to execute. Options: none, check, write, strict'
     required: false
     default: 'write'
   
