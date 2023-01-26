@@ -45,6 +45,9 @@ const terraformFmt   = require('./lib/terraform-fmt');
   actionsCore.setSecret(apiToken); // ensure we do not log sensitive data
   // Locate the version to install
   const argSetupVersion = actionsCore.getInput('setupVersion');
+  // pre-release version inclusion 
+  const argIncludePrerelease = actionsCore.getInput('includePrerelease');
+  var includePrerelease = ( argIncludePrerelease === 'true' ) ? true : false;
   // Invalid version handling
   const argVersionInvalidHandling  = actionsCore.getInput('versionInvalidHandling');
   var versionInvalidHandling = ( argVersionInvalidHandling === 'fail' ) ? 'fail' : 'latest';
@@ -97,7 +100,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
   let userAgent = packageName + '/' + packageVersion;
-  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion, versionInvalidHandling, userAgent);
+  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion, versionInvalidHandling, includePrerelease, userAgent);
   if ( setupConfig === undefined ) { return; }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')

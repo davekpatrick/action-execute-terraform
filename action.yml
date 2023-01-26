@@ -10,6 +10,10 @@ inputs:
   setupVersion:
     description: 'The version of Terraform to setup. If not specified the action will attempt to locate and install the version specified in the configuration file, else it will install the latest available version'
     required: false
+  includePrerelease:
+    description: 'Include pre-releases from setup version selection process'
+    required: false
+    default: 'false'
   versionInvalidHandling:
     description: 'If an invalid version is detected, what action should be taken. Options: fail, latest'
     required: false

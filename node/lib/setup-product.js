@@ -35,7 +35,12 @@ function getOsPlatform() {
   return osPlatformMap[platform] || platform;
   // ------------------------------------
 }
-module.exports = async function setupProduct(argProductName, argSetupDirectory, argSetupVersion, argVersionInvalidHandling, argUserAgent) {
+module.exports = async function setupProduct( argProductName,
+                                              argSetupDirectory, 
+                                              argSetupVersion, 
+                                              argVersionInvalidHandling, 
+                                              argIncludePrerelease, 
+                                              argUserAgent) {
   actionsCore.debug('Start setupProduct');
   // ------------------------------------
   // Download and install Product binary
@@ -47,7 +52,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
   let osPlatform     = getOsPlatform()
   actionsCore.debug('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
   if (argSetupVersion !== 'latest') {
-    let setupVersionValid = semver.validRange(argSetupVersion, { includePrerelease, loose: true });
+    let setupVersionValid = semver.validRange(argSetupVersion, { argIncludePrerelease, loose: true });
     if (!setupVersionValid) {
       if ( argVersionInvalidHandling === 'fail' ) {
         actionsCore.setFailed('Invalid version [' + argSetupVersion + ']');
@@ -66,7 +71,7 @@ module.exports = async function setupProduct(argProductName, argSetupDirectory, 
     var setupVersion = argSetupVersion;
   }
   // Download metadata for a release using a semver range or "latest"
-  let releaseData = await hashicorpReleases.getRelease(argProductName, setupVersion, argUserAgent);
+  let releaseData = await hashicorpReleases.getRelease(argProductName, setupVersion, argUserAgent, argIncludePrerelease);
   if (!releaseData) {
     actionsCore.setFailed('Unable to locate release data for ' + argProductName + ' ' + setupVersion);
     return;
