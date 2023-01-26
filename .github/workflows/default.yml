@@ -102,4 +102,22 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           setupDirectory: terraform/validFormat
           terraformFmtType: 'check'
+      - name: Check invalid format
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: terraform/invalidFormat
+          terraformFmtType: 'check'
+      - name: Write valid format
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: terraform/validFormat
+          terraformFmtType: 'write'
+      - name: Write invalid format
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          setupDirectory: terraform/invalidFormat
+          terraformFmtType: 'write'
 # EOF
