@@ -146,6 +146,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       //
+      let context = github.context;
       let octokit = github.getOctokit(apiToken);
       let getRef = context.ref.replace('/^refs\/', '');
       actionsCore.info('getRef[' + getRef + ']');
