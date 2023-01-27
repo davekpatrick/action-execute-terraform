@@ -148,7 +148,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
       //
       let context = github.context;
       let octokit = github.getOctokit(apiToken);
-      let getRef = context.ref.replace('/^refs\/', '');
+      let getRef = context.ref.replace('/^refs\//', '');
       actionsCore.info('getRef[' + getRef + ']');
       var getRefData = await octokit.rest.git.getRef({owner: context.repo.owner,
                                                       repo: context.repo.repo,
