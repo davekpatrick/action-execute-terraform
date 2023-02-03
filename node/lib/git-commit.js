@@ -11,7 +11,7 @@ const github      = require('@actions/github'); // Microsoft's actions github
 // ------------------------------------
 // Internal modules
 // ------------------------------------
-const utilities = require('./lib/utilities.js');  // Internal utilities
+const utilities = require('./utilities.js');  // Internal utilities
 // ------------------------------------
 // ------------------------------------
 module.exports = async function gitCommit( argApiToken, 
