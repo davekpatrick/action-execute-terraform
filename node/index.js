@@ -94,7 +94,9 @@ const gitCommit      = require('./lib/git-commit');
     var requiredVersion = argSetupVersion;
     actionsCore.info('requiredVersion[' + requiredVersion + ']')
   } else {
-    var requiredVersion = await getVersion(productName, setupDirectory, setupFileName);
+    var requiredVersion = await getVersion( productName, 
+                                            setupDirectory, 
+                                            setupFileName );
     if ( requiredVersion === undefined ) { return; }
   }
   actionsCore.endGroup();
@@ -103,7 +105,12 @@ const gitCommit      = require('./lib/git-commit');
   actionsCore.startGroup('Download and setup ' + productName);
   // Download and setup the product
   let userAgent = packageName + '/' + packageVersion;
-  var setupConfig = await setupProduct(productName, setupDirectory, requiredVersion, versionInvalidHandling, includePrerelease, userAgent);
+  var setupConfig = await setupProduct( productName, 
+                                        setupDirectory, 
+                                        requiredVersion, 
+                                        versionInvalidHandling, 
+                                        includePrerelease, 
+                                        userAgent );
   if ( setupConfig === undefined ) { return; }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
@@ -118,7 +125,9 @@ const gitCommit      = require('./lib/git-commit');
   actionsCore.startGroup('Validate ' + productName + ' binary')
   // Execute a version test
   let runArguments = ['version', '-json'];
-  var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
+  var runProductData = await runProduct( setupConfig['filePath'], 
+                                         setupConfig['dirPath'], 
+                                         runArguments );
   if ( runProductData === undefined ) { return; }
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( runProductData.exitCode !== 0 ) {
@@ -139,15 +148,16 @@ const gitCommit      = require('./lib/git-commit');
   // ------------------------------------
   actionsCore.startGroup( productName + ' format' ); 
   if ( terraformFmtType !== 'none' ) {
-    var terraformFmtData = await terraformFmt(setupConfig['filePath'],
-                                              setupConfig['dirPath'], 
-                                              terraformFmtType);
+    var terraformFmtData = await terraformFmt( setupConfig['filePath'],
+                                               setupConfig['dirPath'], 
+                                               terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       actionsCore.info('Updating repository with format updates');
-      var gitCommitData = await gitCommit(terraformFmtData.invalidFiles);
+      var gitCommitData = await gitCommit( apiToken, 
+                                           terraformFmtData.invalidFiles );
       if ( gitCommitData === undefined ) { return; }
       actionsCore.info('returnData[' + JSON.stringify(gitCommitData) + ']');
     }
