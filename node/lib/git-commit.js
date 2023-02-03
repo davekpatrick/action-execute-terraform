@@ -69,13 +69,13 @@ module.exports = async function gitCommit( argApiToken,
       sha: gitBlobData[i].blobSha,
     } );
   }
-  actionsCore.debug('treeArray[' + JSON.stringify(treeArray) + ']');
+  actionsCore.info('treeArray[' + JSON.stringify(treeArray) + ']');
   // create tree
   var createTreeData = await octokit.rest.git.createTree( { owner: context.repo.owner,
                                                             repo: context.repo.repo,
                                                             tree: treeArray,
                                                             base_tree: getCommitData.data.tree.sha } );
-  actionsCore.debug('createTreeData[' + JSON.stringify(createTreeData) + ']');
+  actionsCore.info('createTreeData[' + JSON.stringify(createTreeData) + ']');
   // setup return data
   returnData = {
     'treeSha': createTreeData.sha,
