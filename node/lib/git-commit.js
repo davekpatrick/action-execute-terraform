@@ -87,7 +87,8 @@ module.exports = async function gitCommit( argApiToken,
                                                                 tree: createTreeData.data.sha } );
   actionsCore.info('createCommitData[' + JSON.stringify(createCommitData) + ']');
   // update ref 
-  let updateRef = context.ref; // do NOT remove the 'refs/' prefix
+  let updateRef = context.ref + '/HEAD'; // do NOT remove the 'refs/' prefix
+  actionsCore.info('updateRef[' + updateRef + ']');
   // doc: https://octokit.github.io/rest.js/v19#git-update-ref
   var updateRefData = await octokit.rest.git.updateRef( { owner: context.repo.owner,
                                                           repo: context.repo.repo,
