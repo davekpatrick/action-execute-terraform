@@ -16,15 +16,18 @@ const getFileContent = require('./get-file-content.js'); // Internal utilities
 // ------------------------------------
 // ------------------------------------
 module.exports = async function gitCommit( argApiToken,
+                                           argActionDetails,
+                                           argCommitMessage,
                                            argRootDirectory,
                                            argFileList) {
   actionsCore.debug('Start gitCommit');
   //
   var context = github.context;
   var octokit = github.getOctokit(argApiToken);
-  let getRef  = context.ref.replace(/^refs\//i, '');
-  actionsCore.info('ref[' + getRef + ']');
   // Get the current reference data
+  let getRef  = context.ref.replace(/^refs\//i, ''); // remove the 'refs/' prefix
+  actionsCore.info('ref[' + getRef + ']');
+  // doc: https://octokit.github.io/rest.js/v19#git-get-ref
   let getRefData = await octokit.rest.git.getRef({owner: context.repo.owner,
                                                   repo: context.repo.repo,
                                                   ref: getRef});
@@ -47,7 +50,7 @@ module.exports = async function gitCommit( argApiToken,
     let pathToFile = argRootDirectory + path.sep + argFileList[i];
     let blobData = await getFileContent( pathToFile );
     actionsCore.info('Created blob for file[' + pathToFile + ']')
-    var createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,
+    let createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,
                                                               repo: context.repo.repo,
                                                               content: blobData,
                                                               encoding: 'utf-8' } );
@@ -69,18 +72,37 @@ module.exports = async function gitCommit( argApiToken,
       sha: gitBlobData[i].blobSha,
     } );
   }
-  actionsCore.info('treeArray[' + JSON.stringify(treeArray) + ']');
+  actionsCore.debug('treeArray[' + JSON.stringify(treeArray) + ']');
   // create tree
-  var createTreeData = await octokit.rest.git.createTree( { owner: context.repo.owner,
+  let createTreeData = await octokit.rest.git.createTree( { owner: context.repo.owner,
                                                             repo: context.repo.repo,
                                                             tree: treeArray,
                                                             base_tree: getCommitData.data.tree.sha } );
   actionsCore.info('createTreeData[' + JSON.stringify(createTreeData) + ']');
+  // create commit
+  var createCommitData = await octokit.rest.git.createCommit( { owner: context.repo.owner,
+                                                                repo: context.repo.repo,
+                                                                message: 'GitHub Action[' + argActionDetails + '] ' + argCommitMessage,
+                                                                parents: [ getCommitData.data.sha ],
+                                                                tree: createTreeData.data.sha } );
+  actionsCore.info('createCommitData[' + JSON.stringify(createCommitData) + ']');
+  // update ref 
+  let updateRef = context.ref; // do NOT remove the 'refs/' prefix
+  // doc: https://octokit.github.io/rest.js/v19#git-update-ref
+  var updateRefData = await octokit.rest.git.updateRef( { owner: context.repo.owner,
+                                                          repo: context.repo.repo,
+                                                          ref: updateRef,
+                                                          sha: createCommitData.data.sha,
+                                                          force: false  } );
   // setup return data
   returnData = {
-    'treeSha': createTreeData.sha,
-    'treeUrl': createTreeData.url,
-    'treeData': createTreeData.tree,
+    'treeSha': createTreeData.data.sha,
+    'treeUrl': createTreeData.data.url,
+    'commitSha': createCommitData.data.sha,
+    'commitUrl': createCommitData.data.url,
+    'ref': updateRefData.data.ref,
+    'refSha': updateRefData.data.object.sha,
+    'refUrl': updateRefData.data.object.url,
   };
   // ------------------------------------
   actionsCore.debug('End gitCommit');

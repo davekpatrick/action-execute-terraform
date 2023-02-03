@@ -153,10 +153,13 @@ const gitCommit      = require('./lib/git-commit');
                                                terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
-    // determine if we need create a commit and PR
+    // determine if we need create a commit
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       actionsCore.info('Updating repository with format updates');
+      let actionDetails = packageName + '@' + packageVersion;
       var gitCommitData = await gitCommit( apiToken, 
+                                           actionDetails,
+                                           'Updating incorrectly formatted files',
                                            setupConfig['dirPath'], 
                                            terraformFmtData.invalidFiles );
       if ( gitCommitData === undefined ) { return; }
