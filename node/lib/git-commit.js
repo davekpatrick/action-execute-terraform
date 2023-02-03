@@ -11,7 +11,7 @@ const github      = require('@actions/github'); // Microsoft's actions github
 // ------------------------------------
 // Internal modules
 // ------------------------------------
-const utilities = require('./utilities.js');  // Internal utilities
+const getFileContent = require('./get-file-content.js');  // Internal utilities
 // ------------------------------------
 // ------------------------------------
 module.exports = async function gitCommit( argApiToken, 
@@ -34,7 +34,7 @@ module.exports = async function gitCommit( argApiToken,
   let getCommitData = await octokit.rest.git.getCommit({owner: context.repo.owner,
                                                         repo: context.repo.repo,
                                                         commit_sha: getRefData.data.object.sha});
-  actionsCore.info('returnData[' + JSON.stringify(getCommitData) + ']');
+  actionsCore.debug('returnData[' + JSON.stringify(getCommitData) + ']');
   if ( getCommitData.status !== 200 ) {
     actionsCore.setFailed('Unable to retrieve commit[' + getRefData.data.object.sha + '] data');
   }
@@ -42,7 +42,7 @@ module.exports = async function gitCommit( argApiToken,
   let gitBlobData = [];
   for ( let i = 0; i < argFileList.length; i++ ) {
     actionsCore.info('Created blob for file[' + argFileList[i] + ']')
-    let blobData = await utilities.getFileContent(argFileList[i]);
+    let blobData = await getFileContent(argFileList[i]);
     let createBlobData = await octokit.rest.git.createBlob({owner: context.repo.owner,
                                                             repo: context.repo.repo,
                                                             content: blobData,
