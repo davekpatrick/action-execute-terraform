@@ -9,8 +9,8 @@ jobs:
     name: Artifact build
     strategy:
       matrix:
-        operatingSystem: [ubuntu-22.04, windows-2022]
-        nodeVersion: [12, 16]
+        operatingSystem: [ubuntu-22.04]
+        nodeVersion: [16]
       fail-fast: false
     runs-on: ${{ matrix.operatingSystem }}
     # 
@@ -35,7 +35,7 @@ jobs:
         npm run build
     - uses: actions/upload-artifact@v3
       with:
-        name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
+        name: ${{ github.event.repository.name }}-build-node
         if-no-files-found: error 
         path: |
           node/dist/
@@ -44,7 +44,7 @@ jobs:
           action.yml
     - uses: actions/upload-artifact@v3
       with:
-        name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+        name: ${{ github.event.repository.name }}-build-tests
         if-no-files-found: error 
         path: |
           tests/
@@ -62,10 +62,10 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-node-${{ matrix.nodeVersion }}
+          name: ${{ github.event.repository.name }}-build-node
       - uses: actions/download-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.operatingSystem }}-tests-${{ matrix.nodeVersion }}
+          name: ${{ github.event.repository.name }}-build-tests
       - name: Debug
         if: ${{ runner.os != 'Windows' }}
         run: |
