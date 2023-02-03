@@ -76,6 +76,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     'exitCode': runProductData['exitCode'],
     'validFormat': validFormat,
     'numInvalidFiles': numInvalidFiles,
+    'rootDirectory': argRunDirectory,
     'invalidFiles': runProductDataFileList,
   };
   // ------------------------------------

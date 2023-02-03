@@ -2,7 +2,8 @@
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os = require('node:os'); // Node's operating system
+const os   = require('node:os');   // Node's operating system
+const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -11,10 +12,11 @@ const github      = require('@actions/github'); // Microsoft's actions github
 // ------------------------------------
 // Internal modules
 // ------------------------------------
-const getFileContent = require('./get-file-content.js');  // Internal utilities
+const getFileContent = require('./get-file-content.js'); // Internal utilities
 // ------------------------------------
 // ------------------------------------
-module.exports = async function gitCommit( argApiToken, 
+module.exports = async function gitCommit( argApiToken,
+                                           argRootDirectory,
                                            argFileList) {
   actionsCore.debug('Start gitCommit');
   //
@@ -41,12 +43,13 @@ module.exports = async function gitCommit( argApiToken,
   // create blob data
   let gitBlobData = [];
   for ( let i = 0; i < argFileList.length; i++ ) {
-    actionsCore.info('Created blob for file[' + argFileList[i] + ']')
-    let blobData = await getFileContent(argFileList[i]);
-    let createBlobData = await octokit.rest.git.createBlob({owner: context.repo.owner,
-                                                            repo: context.repo.repo,
-                                                            content: blobData,
-                                                            encoding: 'utf-8'});
+    let pathToFile = argRootDirectory + path.sep + argFileList[i];
+    actionsCore.info('Created blob for file[' + pathToFile + ']')
+    let blobData = await getFileContent( pathToFile );
+    let createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,
+                                                              repo: context.repo.repo,
+                                                              content: blobData,
+                                                              encoding: 'utf-8' } );
     // add blob data to array
     gitBlobData.push({
       path: argFileList[i],

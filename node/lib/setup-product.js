@@ -2,8 +2,8 @@
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os   = require('node:os'); // Node's operating system
-const fs   = require('node:fs'); // Node's file system
+const os   = require('node:os');   // Node's operating system
+const fs   = require('node:fs');   // Node's file system
 const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules

@@ -2,7 +2,7 @@
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const fs = require('node:fs');   // Node's file system module
+const fs = require('node:fs'); // Node's file system module
 // ------------------------------------
 // External modules
 // ------------------------------------

@@ -157,6 +157,7 @@ const gitCommit      = require('./lib/git-commit');
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       actionsCore.info('Updating repository with format updates');
       var gitCommitData = await gitCommit( apiToken, 
+                                           setupConfig['dirPath'], 
                                            terraformFmtData.invalidFiles );
       if ( gitCommitData === undefined ) { return; }
       actionsCore.info('returnData[' + JSON.stringify(gitCommitData) + ']');
