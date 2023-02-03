@@ -22,9 +22,9 @@ module.exports = async function getFileContent( argPathToFile ) {
   }
   // read setup file
   try {
-    var readFileData = fs.readFileSync( setupFile, 'utf8' );
+    var readFileData = fs.readFileSync( argPathToFile, 'utf8' );
   } catch (error) {
-    actionsCore.setFailed('Unable to read file[' + setupFile + ']');
+    actionsCore.setFailed('Unable to read file[' + argPathToFile + ']');
     return;
   }
   // ------------------------------------
