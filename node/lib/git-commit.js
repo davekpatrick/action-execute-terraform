@@ -62,12 +62,13 @@ module.exports = async function gitCommit( argApiToken,
   // build a tree array
   let treeArray = [];
   for ( let i = 0; i < gitBlobData.length; i++ ) {
-   treeArray.push({
-     path: gitBlobData[i].path,
-     mode: '100644',
-     type: 'blob',
-     sha: gitBlobData[i].blobSha,
-  } );
+    treeArray.push({
+      path: gitBlobData[i].path,
+      mode: '100644',
+      type: 'blob',
+      sha: gitBlobData[i].blobSha,
+    } );
+  }
   actionsCore.debug('treeArray[' + JSON.stringify(treeArray) + ']');
   // create tree
   var createTreeData = await octokit.rest.git.createTree( { owner: context.repo.owner,
@@ -80,7 +81,6 @@ module.exports = async function gitCommit( argApiToken,
     'treeSha': createTreeData.sha,
     'treeUrl': createTreeData.url,
     'treeData': createTreeData.tree,
-
   };
   // ------------------------------------
   actionsCore.debug('End gitCommit');
