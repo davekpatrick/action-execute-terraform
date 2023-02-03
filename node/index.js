@@ -145,24 +145,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
-      //
-      let context = github.context;
-      let octokit = github.getOctokit(apiToken);
-      let getRef = context.ref.replace(/^refs\//i, '');
-      actionsCore.info('ref[' + getRef + ']');
-      // Get the current reference data
-      var getRefData = await octokit.rest.git.getRef({owner: context.repo.owner,
-                                                      repo: context.repo.repo,
-                                                      ref: getRef});
-      actionsCore.debug('returnData[' + JSON.stringify(getRefData) + ']');
-      if ( getRefData.status !== 200 ) {
-        actionsCore.setFailed('Unable to retrieve ref[' + getRef + '] data');
-      }
-      // retrieve the current commit data
-      var getCommitData = await octokit.rest.git.getCommit({owner: context.repo.owner,
-                                                            repo: context.repo.repo,
-                                                            commit_sha: getRefData.data.object.sha});
-      actionsCore.info('returnData[' + JSON.stringify(getCommitData) + ']');
+      actionsCore.info('Updating repository with format updates');
     }
   } else {
     actionsCore.info('Skipping ' + productName + ' format');
