@@ -18,6 +18,7 @@ const getVersion     = require('./lib/get-version');
 const setupProduct   = require('./lib/setup-product');
 const runProduct     = require('./lib/run-product');
 const terraformFmt   = require('./lib/terraform-fmt');
+const gitCommit      = require('./lib/git-commit');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -118,7 +119,7 @@ const terraformFmt   = require('./lib/terraform-fmt');
   // Execute a version test
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct(setupConfig['filePath'], setupConfig['dirPath'], runArguments);
-  if ( runProductData === undefined ) { return;}
+  if ( runProductData === undefined ) { return; }
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
   if ( runProductData.exitCode !== 0 ) {
     actionsCore.setFailed('Binary version validation failed');
@@ -146,6 +147,9 @@ const terraformFmt   = require('./lib/terraform-fmt');
     // determine if we need create a commit and PR
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       actionsCore.info('Updating repository with format updates');
+      var gitCommitData = await gitCommit(terraformFmtData.invalidFiles);
+      if ( gitCommitData === undefined ) { return; }
+      actionsCore.info('returnData[' + JSON.stringify(gitCommitData) + ']');
     }
   } else {
     actionsCore.info('Skipping ' + productName + ' format');

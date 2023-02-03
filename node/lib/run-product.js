@@ -2,11 +2,13 @@
 // ------------------------------------
 // External modules
 // ------------------------------------
-const actionsCore = require('@actions/core');          // Microsoft's actions toolkit
-const actionsExec = require('@actions/exec');          // Microsoft's actions exec toolkit
+const actionsCore = require('@actions/core'); // Microsoft's actions toolkit
+const actionsExec = require('@actions/exec'); // Microsoft's actions exec toolkit
 // ------------------------------------
 // ------------------------------------
-module.exports = async function runProduct(argPathToBinary, argRunDirectory, argRunArguments) {
+module.exports = async function runProduct( argPathToBinary, 
+                                            argRunDirectory, 
+                                            argRunArguments ) {
   actionsCore.debug('Start runProduct');
   // Argument validation
   if ( argPathToBinary === null || argPathToBinary === '' ) {

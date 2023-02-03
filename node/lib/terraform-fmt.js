@@ -6,7 +6,7 @@ const os = require('node:os'); // Node's operating system
 // ------------------------------------
 // External modules
 // ------------------------------------
-const actionsCore = require('@actions/core');   // Microsoft's actions toolkit core
+const actionsCore = require('@actions/core'); // Microsoft's actions toolkit core
 // ------------------------------------
 // Internal modules
 // ------------------------------------
