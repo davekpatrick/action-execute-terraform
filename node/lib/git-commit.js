@@ -33,7 +33,7 @@ module.exports = async function gitCommit( argApiToken,
     actionsCore.setFailed('Unable to retrieve ref[' + getRef + '] data');
   }
   // retrieve the current commit data
-  let getCommitData = await octokit.rest.git.getCommit({owner: context.repo.owner,
+  var getCommitData = await octokit.rest.git.getCommit({owner: context.repo.owner,
                                                         repo: context.repo.repo,
                                                         commit_sha: getRefData.data.object.sha});
   actionsCore.debug('returnData[' + JSON.stringify(getCommitData) + ']');
@@ -41,28 +41,46 @@ module.exports = async function gitCommit( argApiToken,
     actionsCore.setFailed('Unable to retrieve commit[' + getRefData.data.object.sha + '] data');
   }
   // create blob data
-  let gitBlobData = [];
+  var gitBlobData = [];
   for ( let i = 0; i < argFileList.length; i++ ) {
     actionsCore.info('readfile[' + argFileList[i] + ']')
     let pathToFile = argRootDirectory + path.sep + argFileList[i];
     let blobData = await getFileContent( pathToFile );
     actionsCore.info('Created blob for file[' + pathToFile + ']')
-    let createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,
+    var createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,
                                                               repo: context.repo.repo,
                                                               content: blobData,
                                                               encoding: 'utf-8' } );
     // add blob data to array
     gitBlobData.push({
       path: argFileList[i],
-      bobUrl: createBlobData.data.url,
-      bobSha: createBlobData.data.sha,
+      blobUrl: createBlobData.data.url,
+      blobSha: createBlobData.data.sha,
     });
   }
-  actionsCore.info('gitBlobData[' + JSON.stringify(gitBlobData) + ']');
- 
+  actionsCore.debug('gitBlobData[' + JSON.stringify(gitBlobData) + ']');
+  // build a tree array
+  let treeArray = [];
+  for ( let i = 0; i < gitBlobData.length; i++ ) {
+   treeArray.push({
+     path: gitBlobData[i].path,
+     mode: '100644',
+     type: 'blob',
+     sha: gitBlobData[i].blobSha,
+  } );
+  actionsCore.debug('treeArray[' + JSON.stringify(treeArray) + ']');
+  // create tree
+  var createTreeData = await octokit.rest.git.createTree( { owner: context.repo.owner,
+                                                            repo: context.repo.repo,
+                                                            tree: treeArray,
+                                                            base_tree: getCommitData.data.tree.sha } );
+  actionsCore.debug('createTreeData[' + JSON.stringify(createTreeData) + ']');
   // setup return data
   returnData = {
-    'gitBlobData': gitBlobData,
+    'treeSha': createTreeData.sha,
+    'treeUrl': createTreeData.url,
+    'treeData': createTreeData.tree,
+
   };
   // ------------------------------------
   actionsCore.debug('End gitCommit');
