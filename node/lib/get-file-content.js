@@ -16,7 +16,7 @@ const actionsCore = require('@actions/core'); // Microsoft's actions toolkit
 module.exports = async function getFileContent( argPathToFile ) {
   actionsCore.debug('Start getFileContent');
   // ------------------------------------
-  if ( ! fs.existsSync(pathToFile) ) {
+  if ( ! fs.existsSync( argPathToFile ) ) {
     actionsCore.setFailed('file[' + argPathToFile + '] does not exist');
     return;
   }
