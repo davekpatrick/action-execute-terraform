@@ -43,9 +43,10 @@ module.exports = async function gitCommit( argApiToken,
   // create blob data
   let gitBlobData = [];
   for ( let i = 0; i < argFileList.length; i++ ) {
+    actionsCore.info('readfile[' + argFileList[i] + ']')
     let pathToFile = argRootDirectory + path.sep + argFileList[i];
-    actionsCore.info('Created blob for file[' + pathToFile + ']')
     let blobData = await getFileContent( pathToFile );
+    actionsCore.info('Created blob for file[' + pathToFile + ']')
     let createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,
                                                               repo: context.repo.repo,
                                                               content: blobData,
