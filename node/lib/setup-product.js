@@ -36,7 +36,6 @@ function getOsPlatform() {
   // ------------------------------------
 }
 module.exports = async function setupProduct( argProductName,
-                                              argSetupDirectory, 
                                               argSetupVersion, 
                                               argVersionInvalidHandling, 
                                               argIncludePrerelease, 
@@ -80,11 +79,11 @@ module.exports = async function setupProduct( argProductName,
     return;
   }
   actionsCore.debug('releaseData[' + JSON.stringify(releaseData) + ']');
-  var releaseVersion = releaseData.version;
+  var productVersion = releaseData.version;
   // Locate the build for the given operating system platform and architecture
   var setupBuild = releaseData.getBuild(osPlatform, osArchitecture); 
   if (!setupBuild) {
-    actionsCore.setFailed('No build found for version ' + releaseVersion + ' on ' + osPlatform + '[' + osArchitecture + ']');
+    actionsCore.setFailed('No build found for version ' + productVersion + ' on ' + osPlatform + '[' + osArchitecture + ']');
     return;
   }
   // Download the build
@@ -96,8 +95,6 @@ module.exports = async function setupProduct( argProductName,
   await releaseData.verify(downloadFilePath, setupBuild.filename);
   actionsCore.info(argProductName + ' downloaded and verified');
   // Extract the build
-  var setupExtractDestinationDirectory = process.env.GITHUB_WORKSPACE + path.sep + argSetupDirectory;
-  actionsCore.debug('setupExtractDestinationDirectory[' + setupExtractDestinationDirectory + ']');
   if ( osPlatform === 'windows' ) {
     var setupExtractSourceFilePath = downloadFilePath + '.zip';
     fs.rename(downloadFilePath, setupExtractSourceFilePath, (error) => {
@@ -111,19 +108,33 @@ module.exports = async function setupProduct( argProductName,
     var setupExtractSourceFilePath = downloadFilePath;
   }
   actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
-  setupPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, setupExtractDestinationDirectory );
-  actionsCore.debug('Extracted to setupPath[' + setupPath + ']');
+  extractPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, undefined );
+  actionsCore.debug('Extracted to extractPath[' + extractPath + ']');
+  // cache the extracted product
+  actionsCore.info( 'Cache ' + argProductName );
+  var productPath = await actionsToolCache.cacheDir(
+    extractPath,
+    argProductName,
+    productVersion,
+    osArchitecture
+  );
+  // determine the setup file path
   if ( osPlatform === 'windows' ) {
-    setupFilePath = setupPath + path.sep + argProductName + '.exe';
+    var productFilePath = productPath + path.sep + argProductName + '.exe';
   } else {
-    setupFilePath = setupPath + path.sep + argProductName;
+    var productFilePath = productPath + path.sep + argProductName;
   }
   actionsCore.info(argProductName + ' product setup completed');
+  // export variables
+  actionsCore.setOutput( "setupVersion", productVersion );
+  actionsCore.setOutput( "setupPath", productPath );
+  actionsCore.exportVariable( 'TF_CLI_PATH', productPath );
+  actionsCore.addPath( productPath );
   // setup return data
   returnData = {
-    version: releaseVersion,
-    dirPath: setupPath,
-    filePath: setupFilePath
+    version: productVersion,
+    dirPath: productPath,
+    filePath: productFilePath
   }
   // ------------------------------------
   actionsCore.debug('End setupProduct');
