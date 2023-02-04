@@ -63,13 +63,13 @@ const gitCommit      = require('./lib/git-commit');
     actionsCore.debug('HashiCorp Checkpoint service enabled');
   }
   // Ensure we have a usable working directory
-  const argSetupDirectory = actionsCore.getInput('setupDirectory');
-  if ( argSetupDirectory !== null && argSetupDirectory !== '' ) {
-    var setupDirectory = argSetupDirectory;
+  const argConfigDirectory = actionsCore.getInput('configDirectory');
+  if ( argConfigDirectory !== null && argConfigDirectory !== '' ) {
+    var configDirectory = argConfigDirectory;
   } else {
-    var setupDirectory = process.env.GITHUB_WORKSPACE; // doc: https://docs.github.com/en/actions/reference/environment-variables
+    var configDirectory = process.env.GITHUB_WORKSPACE; // doc: https://docs.github.com/en/actions/reference/environment-variables
   }
-  actionsCore.debug('setupDirectory[' + setupDirectory + ']');
+  actionsCore.info('configDirectory[' + configDirectory + ']');
   // Ensure we have a usable setup file
   const argSetupFileName = actionsCore.getInput('setupFileName');
   if ( argSetupFileName !== null && argSetupFileName !== '' ) {
@@ -95,7 +95,7 @@ const gitCommit      = require('./lib/git-commit');
     actionsCore.info('requiredVersion[' + requiredVersion + ']')
   } else {
     var requiredVersion = await getVersion( productName, 
-                                            setupDirectory, 
+                                            configDirectory, 
                                             setupFileName );
     if ( requiredVersion === undefined ) { return; }
   }
@@ -120,7 +120,7 @@ const gitCommit      = require('./lib/git-commit');
   // Execute a version test
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct( setupConfig['filePath'], 
-                                         setupDirectory, 
+                                         configDirectory, 
                                          runArguments );
   if ( runProductData === undefined ) { return; }
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
@@ -143,7 +143,7 @@ const gitCommit      = require('./lib/git-commit');
   actionsCore.startGroup( productName + ' format' ); 
   if ( terraformFmtType !== 'none' ) {
     var terraformFmtData = await terraformFmt( setupConfig['filePath'],
-                                               setupDirectory, 
+                                               configDirectory, 
                                                terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');

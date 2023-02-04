@@ -22,7 +22,7 @@ inputs:
     description: 'Use the HashiCorp Checkpoint service to check for the availability of new versions and critical security patches'
     required: false
     default: 'true'
-  setupDirectory:
+  configDirectory:
     description: 'The working directory that contains the Terraform root module configuration'
     required: false
     default: 'terraform'

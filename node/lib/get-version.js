@@ -11,7 +11,7 @@ const actionsCore = require('@actions/core'); // Microsoft's actions toolkit
 // ------------------------------------
 // ------------------------------------
 module.exports = async function getVersion( argProductName, 
-                                            argSetupDirectory, 
+                                            argConfigDirectory, 
                                             argSetupFileName ) {
   actionsCore.debug('Start getVersion');
   // ------------------------------------
@@ -28,7 +28,7 @@ module.exports = async function getVersion( argProductName,
   actionsCore.debug('versionRegex[' + versionRegex + ']');
   // determine setup file
   var setupFile = path.format({
-    dir: argSetupDirectory,
+    dir: argConfigDirectory,
     base: argSetupFileName
   });
   actionsCore.debug('setupFile[' + setupFile + ']');
