@@ -82,44 +82,44 @@ jobs:
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/oldVersion
+          configDirectory: tests/terraform/oldVersion
           terraformFmtType: 'none'
       - name: Invalid version
         continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/invalidVersion
+          configDirectory: tests/terraform/invalidVersion
           terraformFmtType: 'none'
       - name: Invalid version latest
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/invalidVersion
+          configDirectory: tests/terraform/invalidVersion
           terraformFmtType: 'none'
           versionInvalidHandling: 'latest'
       - name: Check valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/validFormat
+          configDirectory: tests/terraform/validFormat
           terraformFmtType: 'check'
       - name: Check invalid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/invalidFormat
+          configDirectory: tests/terraform/invalidFormat
           terraformFmtType: 'check'
       - name: Write valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/validFormat
+          configDirectory: tests/terraform/validFormat
           terraformFmtType: 'write'
       - name: Write invalid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: terraform/invalidFormat
+          configDirectory: tests/terraform/invalidFormat
           terraformFmtType: 'write'
 # EOF
