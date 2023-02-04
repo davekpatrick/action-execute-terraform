@@ -54,7 +54,7 @@ module.exports = async function gitCommit( argApiToken,
                                                               encoding: 'utf-8' } );
     // add blob data to array
     gitBlobData.push({
-      path: argFileList[i],
+      filePath: argFileList[i],
       blobUrl: createBlobData.data.url,
       blobSha: createBlobData.data.sha,
     });
@@ -64,7 +64,7 @@ module.exports = async function gitCommit( argApiToken,
   let treeArray = [];
   for ( let i = 0; i < gitBlobData.length; i++ ) {
     treeArray.push({
-      path: gitBlobData[i].path,
+      path: gitBlobData[i].filePath,
       mode: '100644',
       type: 'blob',
       sha: gitBlobData[i].blobSha,
