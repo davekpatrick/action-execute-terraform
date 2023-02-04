@@ -90,7 +90,7 @@ module.exports = async function gitCommit( argApiToken,
   // note: the 'ref' parameter must NOT have the 'refs/' prefix even though the documentation says it should
   //let updateRef = context.ref; // do NOT remove the 'refs/' prefix
   let updateRef = context.ref.replace(/^refs\//i, ''); // remove the 'refs/' prefix
-  actionsCore.info('updateRef[' + updateRef + ']');
+  actionsCore.debug('updateRef[' + updateRef + ']');
   var updateRefData = await octokit.rest.git.updateRef( { owner: context.repo.owner,
                                                           repo: context.repo.repo,
                                                           ref: updateRef,
