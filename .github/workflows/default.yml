@@ -98,6 +98,13 @@ jobs:
           configDirectory: tests/terraform/invalidVersion
           terraformFmtType: 'none'
           versionInvalidHandling: 'latest'
+      - name: Invalid config directory
+        continue-on-error: true
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: ''
+          terraformFmtType: 'check'
       - name: Check valid format
         uses: ./
         with:
