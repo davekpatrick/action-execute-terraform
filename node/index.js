@@ -145,7 +145,7 @@ const gitCommit      = require('./lib/git-commit');
                                                configDirectory, 
                                                terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
-    actionsCore.info('returnData[' + JSON.stringify(terraformFmtData) + ']');
+    actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit
     if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
       actionsCore.info('Updating repository with format updates');
