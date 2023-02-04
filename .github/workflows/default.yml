@@ -1,4 +1,5 @@
 # BOF
+name: Default
 on:
   workflow_dispatch:
   push:
