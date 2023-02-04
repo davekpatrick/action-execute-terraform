@@ -1,9 +1,17 @@
 // BOF
 // ------------------------------------
+// Node.js built-in modules
+// ------------------------------------
+const path = require('node:path'); // Node's path module
+// ------------------------------------
 // External modules
 // ------------------------------------
 const actionsCore = require('@actions/core'); // Microsoft's actions toolkit
 const actionsExec = require('@actions/exec'); // Microsoft's actions exec toolkit
+// ------------------------------------
+// Internal modules
+// ------------------------------------
+// None
 // ------------------------------------
 // ------------------------------------
 module.exports = async function runProduct( argPathToBinary, 
@@ -33,7 +41,7 @@ module.exports = async function runProduct( argPathToBinary,
   };
   actionsExecOptions.silent = true;
   actionsExecOptions.ignoreReturnCode = true;
-  actionsExecOptions.cwd = process.env.GITHUB_WORKSPACE + argRunDirectory;
+  actionsExecOptions.cwd = process.env.GITHUB_WORKSPACE + path.sep + argRunDirectory;
   // Execute and capture output
   actionsCore.debug('processEnv[' + JSON.stringify(process.env) + ']');
   let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, actionsExecOptions);

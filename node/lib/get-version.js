@@ -9,6 +9,10 @@ const path = require('node:path'); // Node's path module
 // ------------------------------------
 const actionsCore = require('@actions/core'); // Microsoft's actions toolkit
 // ------------------------------------
+// Internal modules
+// ------------------------------------
+// None
+// ------------------------------------
 // ------------------------------------
 module.exports = async function getVersion( argProductName, 
                                             argConfigDirectory, 

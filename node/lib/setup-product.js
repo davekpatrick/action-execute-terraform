@@ -13,6 +13,10 @@ const actionsToolCache  = require('@actions/tool-cache');    // Microsoft's acti
 const semver            = require('semver')                  // Node's semver module
 const hashicorpReleases = require('@hashicorp/js-releases'); // Hashicorp's releases API
 // ------------------------------------
+// Internal modules
+// ------------------------------------
+// None
+// ------------------------------------
 // ------------------------------------
 function getOsArchitecture() {
   // doc: https://nodejs.org/api/os.html#os_os_arch
