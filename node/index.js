@@ -64,20 +64,18 @@ const gitCommit      = require('./lib/git-commit');
   }
   // Ensure we have a usable working directory
   const argConfigDirectory = actionsCore.getInput('configDirectory');
-  if ( argConfigDirectory !== null && argConfigDirectory !== '' ) {
+  if ( argConfigDirectory !== null ) {
     var configDirectory = argConfigDirectory;
-  } else {
-    var configDirectory = process.env.GITHUB_WORKSPACE; // doc: https://docs.github.com/en/actions/reference/environment-variables
   }
   actionsCore.info('configDirectory[' + configDirectory + ']');
   // Ensure we have a usable setup file
-  const argSetupFileName = actionsCore.getInput('setupFileName');
-  if ( argSetupFileName !== null && argSetupFileName !== '' ) {
-    var setupFileName = argSetupFileName;
+  const argConfigFileName = actionsCore.getInput('configFileName');
+  if ( argConfigFileName !== null && argConfigFileName !== '' ) {
+    var configFileName = argConfigFileName;
   } else {
     actionsCore.setFailed('No setup file input specified');
   }
-  actionsCore.debug('setupFileName[' + setupFileName + ']');
+  actionsCore.debug('configFileName[' + configFileName + ']');
   // Terraform fmt options
   const argTerraformFmtType = actionsCore.getInput('terraformFmtType');
   if ( argTerraformFmtType !== null && argTerraformFmtType !== '' ) {
@@ -96,7 +94,7 @@ const gitCommit      = require('./lib/git-commit');
   } else {
     var requiredVersion = await getVersion( productName, 
                                             configDirectory, 
-                                            setupFileName );
+                                            configFileName );
     if ( requiredVersion === undefined ) { return; }
   }
   actionsCore.endGroup();
