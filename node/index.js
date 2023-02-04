@@ -106,7 +106,6 @@ const gitCommit      = require('./lib/git-commit');
   // Download and setup the product
   let userAgent = packageName + '/' + packageVersion;
   var setupConfig = await setupProduct( productName, 
-                                        setupDirectory, 
                                         requiredVersion, 
                                         versionInvalidHandling, 
                                         includePrerelease, 
@@ -114,11 +113,6 @@ const gitCommit      = require('./lib/git-commit');
   if ( setupConfig === undefined ) { return; }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
-  // Export variables
-  actionsCore.setOutput("setupVersion",setupConfig['version']);
-  actionsCore.setOutput("setupPath", setupConfig['dirPath']);
-  actionsCore.exportVariable('TF_CLI_PATH', setupConfig['dirPath']);
-  actionsCore.addPath(setupConfig['dirPath']);
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
@@ -126,7 +120,7 @@ const gitCommit      = require('./lib/git-commit');
   // Execute a version test
   let runArguments = ['version', '-json'];
   var runProductData = await runProduct( setupConfig['filePath'], 
-                                         setupConfig['dirPath'], 
+                                         setupDirectory, 
                                          runArguments );
   if ( runProductData === undefined ) { return; }
   actionsCore.debug('returnData[' + JSON.stringify(runProductData) + ']');
@@ -149,7 +143,7 @@ const gitCommit      = require('./lib/git-commit');
   actionsCore.startGroup( productName + ' format' ); 
   if ( terraformFmtType !== 'none' ) {
     var terraformFmtData = await terraformFmt( setupConfig['filePath'],
-                                               setupConfig['dirPath'], 
+                                               setupDirectory, 
                                                terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
@@ -160,7 +154,7 @@ const gitCommit      = require('./lib/git-commit');
       var gitCommitData = await gitCommit( apiToken, 
                                            actionDetails,
                                            'Updating incorrectly formatted files',
-                                           setupConfig['dirPath'], 
+                                           setupDirectory, 
                                            terraformFmtData.invalidFiles );
       if ( gitCommitData === undefined ) { return; }
       actionsCore.info('returnData[' + JSON.stringify(gitCommitData) + ']');
