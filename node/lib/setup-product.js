@@ -86,38 +86,46 @@ module.exports = async function setupProduct( argProductName,
     actionsCore.setFailed('No build found for version ' + productVersion + ' on ' + osPlatform + '[' + osArchitecture + ']');
     return;
   }
-  // Download the build
-  var setupBuildUrl = setupBuild.url;
-  actionsCore.debug('setupBuildUrl[' + setupBuildUrl + ']');
-  var downloadFilePath = await actionsToolCache.downloadTool(setupBuildUrl);
-  actionsCore.debug('downloadFilePath[' + downloadFilePath + ']')
-  // Verify the build
-  await releaseData.verify(downloadFilePath, setupBuild.filename);
-  actionsCore.info(argProductName + ' downloaded and verified');
-  // Extract the build
-  if ( osPlatform === 'windows' ) {
-    var setupExtractSourceFilePath = downloadFilePath + '.zip';
-    fs.rename(downloadFilePath, setupExtractSourceFilePath, (error) => {
-      if (error) {
-        actionsCore.setFailed('Unable to rename file [' + downloadFilePath + '] to [' + setupExtractSourceFilePath + ']');
-        return;
-      }
-      actionsCore.debug('Successfully renamed file[' + setupExtractSourceFilePath + ']')
-    });
+  // check if the product is already cached
+  let cachedProductPath = actionsToolCache.find(argProductName, productVersion, osArchitecture);
+  if (cachedProductPath) {
+    actionsCore.info( argProductName + ' found in cache' );
+    var productPath = cachedProductPath;
   } else {
-    var setupExtractSourceFilePath = downloadFilePath;
+    // Download the build
+    var setupBuildUrl = setupBuild.url;
+    actionsCore.debug('setupBuildUrl[' + setupBuildUrl + ']');
+    var downloadFilePath = await actionsToolCache.downloadTool(setupBuildUrl);
+    actionsCore.debug('downloadFilePath[' + downloadFilePath + ']')
+    // Verify the build
+    await releaseData.verify(downloadFilePath, setupBuild.filename);
+    actionsCore.info(argProductName + ' downloaded and verified');
+    // Extract the build
+    if ( osPlatform === 'windows' ) {
+      var setupExtractSourceFilePath = downloadFilePath + '.zip';
+      fs.rename(downloadFilePath, setupExtractSourceFilePath, (error) => {
+        if (error) {
+          actionsCore.setFailed('Unable to rename file [' + downloadFilePath + '] to [' + setupExtractSourceFilePath + ']');
+          return;
+        }
+        actionsCore.debug('Successfully renamed file[' + setupExtractSourceFilePath + ']')
+      });
+    } else {
+      var setupExtractSourceFilePath = downloadFilePath;
+    }
+    actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
+    extractPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, undefined );
+    actionsCore.debug('Extracted to extractPath[' + extractPath + ']');
+    // cache the extracted product
+    actionsCore.info( 'Cache ' + argProductName );
+    var productPath = await actionsToolCache.cacheDir(
+      extractPath,
+      argProductName,
+      productVersion,
+      osArchitecture
+    );
   }
-  actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
-  extractPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, undefined );
-  actionsCore.debug('Extracted to extractPath[' + extractPath + ']');
-  // cache the extracted product
-  actionsCore.info( 'Cache ' + argProductName );
-  var productPath = await actionsToolCache.cacheDir(
-    extractPath,
-    argProductName,
-    productVersion,
-    osArchitecture
-  );
+  actionsCore.debug('productPath[' + productPath + ']');
   // determine the setup file path
   if ( osPlatform === 'windows' ) {
     var productFilePath = productPath + path.sep + argProductName + '.exe';
