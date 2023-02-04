@@ -111,6 +111,7 @@ const gitCommit      = require('./lib/git-commit');
   if ( setupConfig === undefined ) { return; }
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
+  actionsCore.info('filePath[' + setupConfig['filePath'] + ']')
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
