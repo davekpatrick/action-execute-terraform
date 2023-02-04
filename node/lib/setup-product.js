@@ -124,6 +124,7 @@ module.exports = async function setupProduct( argProductName,
   } else {
     var productFilePath = productPath + path.sep + argProductName;
   }
+  actionsCore.info('filePath[' + productFilePath + ']')
   actionsCore.info(argProductName + ' product setup completed');
   // export variables
   actionsCore.setOutput( "setupVersion", productVersion );
