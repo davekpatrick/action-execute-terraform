@@ -3,7 +3,6 @@
 // Node.js built-in modules
 // ------------------------------------
 const os   = require('node:os'); // Node's operating system
-const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -61,7 +60,8 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
         actionsCore.info('Invalid file[' + String(i).padStart(3, '0') + '][' + runProductDataFileList[i] + ']');
         // add to invalidFiles array
         invalidFiles.push(
-          argRunDirectory + path.sep + runProductDataFileList[i]
+          // always use forward slash for consistency
+          argRunDirectory + '/' + runProductDataFileList[i]
         );
       }
     }
