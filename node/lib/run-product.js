@@ -33,7 +33,7 @@ module.exports = async function runProduct( argPathToBinary,
   };
   actionsExecOptions.silent = true;
   actionsExecOptions.ignoreReturnCode = true;
-  actionsExecOptions.cwd = argRunDirectory;
+  actionsExecOptions.cwd = process.env.GITHUB_WORKSPACE + argRunDirectory;
   // Execute and capture output
   actionsCore.debug('processEnv[' + JSON.stringify(process.env) + ']');
   let actionExecExitCode = await actionsExec.exec(argPathToBinary, argRunArguments, actionsExecOptions);
