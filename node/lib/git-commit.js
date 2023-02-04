@@ -2,8 +2,7 @@
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os   = require('node:os');   // Node's operating system
-const path = require('node:path'); // Node's path module
+const os = require('node:os');   // Node's operating system
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -18,7 +17,6 @@ const getFileContent = require('./get-file-content.js'); // Internal utilities
 module.exports = async function gitCommit( argApiToken,
                                            argActionDetails,
                                            argCommitMessage,
-                                           argRootDirectory,
                                            argFileList) {
   actionsCore.debug('Start gitCommit');
   //
@@ -47,7 +45,7 @@ module.exports = async function gitCommit( argApiToken,
   var gitBlobData = [];
   for ( let i = 0; i < argFileList.length; i++ ) {
     actionsCore.info('readfile[' + argFileList[i] + ']')
-    let pathToFile = argRootDirectory + path.sep + argFileList[i];
+    let pathToFile = argFileList[i];
     let blobData = await getFileContent( pathToFile );
     actionsCore.info('Created blob for file[' + pathToFile + ']')
     let createBlobData = await octokit.rest.git.createBlob( { owner: context.repo.owner,

@@ -154,7 +154,6 @@ const gitCommit      = require('./lib/git-commit');
       var gitCommitData = await gitCommit( apiToken, 
                                            actionDetails,
                                            'Updating incorrectly formatted files',
-                                           setupDirectory, 
                                            terraformFmtData.invalidFiles );
       if ( gitCommitData === undefined ) { return; }
       actionsCore.info('returnData[' + JSON.stringify(gitCommitData) + ']');
