@@ -66,6 +66,8 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ github.event.repository.name }}-build-tests
+          path: |
+            tests/
       - name: Debug
         if: ${{ runner.os != 'Windows' }}
         run: |
@@ -80,44 +82,44 @@ jobs:
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/oldVersion
+          configDirectory: terraform/oldVersion
           terraformFmtType: 'none'
       - name: Invalid version
         continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/invalidVersion
+          configDirectory: terraform/invalidVersion
           terraformFmtType: 'none'
       - name: Invalid version latest
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/invalidVersion
+          configDirectory: terraform/invalidVersion
           terraformFmtType: 'none'
           versionInvalidHandling: 'latest'
       - name: Check valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/validFormat
+          configDirectory: terraform/validFormat
           terraformFmtType: 'check'
       - name: Check invalid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/invalidFormat
+          configDirectory: terraform/invalidFormat
           terraformFmtType: 'check'
       - name: Write valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/validFormat
+          configDirectory: terraform/validFormat
           terraformFmtType: 'write'
       - name: Write invalid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          setupDirectory: terraform/invalidFormat
+          configDirectory: terraform/invalidFormat
           terraformFmtType: 'write'
 # EOF
