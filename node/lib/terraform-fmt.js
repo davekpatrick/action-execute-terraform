@@ -2,7 +2,8 @@
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os = require('node:os'); // Node's operating system
+const os   = require('node:os'); // Node's operating system
+const path = require('node:path'); // Node's path module
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -40,11 +41,12 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   }
   // Format output into a list, removing empty items
   var runProductDataFileList = runProductData.stdOut.replaceAll(os.EOL,outputSplitString).split(outputSplitString).filter(n => n);
+  var numInvalidFiles = runProductDataFileList.length;
   // format error message handling
-  if ( runProductDataFileList.length > 0 ) {
-    if ( runProductDataFileList.length === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
+  if ( numInvalidFiles > 0 ) {
+    if ( numInvalidFiles === 1 ) { var fileWord = 'file'; } else { var fileWord = 'files'; }
     // incorrect format message
-    var incorrectFormatMessage = runProductDataFileList.length + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected';
+    var incorrectFormatMessage = numInvalidFiles + ' incorrectly formatted Terraform configuration ' + fileWord + ' detected';
     if ( argType === 'strict' ) {
       // just info log it as we are going to setFailed later
       actionsCore.info(incorrectFormatMessage );
@@ -52,11 +54,15 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
       actionsCore.notice(incorrectFormatMessage);
     }
     var validFormat = false;  
-    var numInvalidFiles = runProductDataFileList.length;
+    var invalidFiles = [];
     // log incorrectly formatted files
-    for ( let i = 0; i < runProductDataFileList.length; i++ ) {
+    for ( let i = 0; i < numInvalidFiles; i++ ) {
       if ( runProductDataFileList[i] !== '' ) { 
         actionsCore.info('Invalid file[' + String(i).padStart(3, '0') + '][' + runProductDataFileList[i] + ']');
+        // add to invalidFiles array
+        invalidFiles.push(
+          argRunDirectory + path.sep + runProductDataFileList[i]
+        );
       }
     }
     // fail if strict
@@ -76,8 +82,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     'exitCode': runProductData['exitCode'],
     'validFormat': validFormat,
     'numInvalidFiles': numInvalidFiles,
-    'rootDirectory': argRunDirectory,
-    'invalidFiles': runProductDataFileList,
+    'invalidFiles': invalidFiles,
   };
   // ------------------------------------
   actionsCore.debug('End terraformFmt');
