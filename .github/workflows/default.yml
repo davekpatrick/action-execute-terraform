@@ -159,11 +159,18 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: 'tests/terraform/validConfig'
           terraformFmtType: 'none'
-      - name: Invalid configuration code
+      - name: Invalid init configuration code
         continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: 'tests/terraform/invalidConfig'
+          configDirectory: 'tests/terraform/invalidConfigInit'
+          terraformFmtType: 'none'
+      - name: Invalid resource configuration code
+        continue-on-error: true
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: 'tests/terraform/invalidConfigResource'
           terraformFmtType: 'none'
 # EOF
