@@ -2,6 +2,12 @@
 name: Default
 on:
   workflow_dispatch:
+    inputs:
+      commitChanges:
+        description: 'True to commit changes'
+        required: true 
+        type: boolean 
+        default: false
   push:
   pull_request:
 jobs:
@@ -125,6 +131,7 @@ jobs:
           configDirectory: tests/terraform/validFormat
           terraformFmtType: 'write'
       - name: Write invalid format
+        if: ${{ inputs.commitChanges }} 
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
