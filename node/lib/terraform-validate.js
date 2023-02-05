@@ -11,6 +11,7 @@ const actionsCore = require('@actions/core'); // Microsoft's actions toolkit cor
 // Internal modules
 // ------------------------------------
 const runProduct = require('./run-product.js');
+const { access } = require('node:fs');
 // ------------------------------------
 // ------------------------------------
 module.exports = async function terraformValidate( argPathToBinary, 
@@ -21,8 +22,14 @@ module.exports = async function terraformValidate( argPathToBinary,
                                              argRunDirectory, 
                                              ['init', '-backend=false'] );
   if ( runProductInitData === undefined ) { return; }
-  actionsCore.info('runProductInitData[' + JSON.stringify(runProductInitData) + ']');
+  actionsCore.debug('runProductInitData[' + JSON.stringify(runProductInitData) + ']');
   actionsCore.info('exitcode[' + runProductInitData.exitCode + ']');
+  if ( runProductInitData.exitCode !== 0 ) {
+    // Anon-zero exit code at this pint means bad configuration code
+    actionsCore.info('stderr[' + runProductInitData.stdErr + ']');
+    actionsCore.setFailed('Terraform init command execution failure');
+    return;
+  }
   // terraform validate -json
   var runProductData = await runProduct( argPathToBinary,
                                          argRunDirectory,
@@ -30,6 +37,11 @@ module.exports = async function terraformValidate( argPathToBinary,
   if ( runProductData === undefined ) { return; }
   actionsCore.info('runProductData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');  
+  if ( runProductInitData.exitCode !== 0 ) {
+    // Anon-zero exit code at this pint means bad configuration code
+    actionsCore.setFailed('Terraform validation failure');
+    return;
+  }
   // setup return data
   returnData = {
     'stdOut': runProductData['stdOut'],  
