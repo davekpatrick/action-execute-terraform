@@ -34,7 +34,10 @@ inputs:
     description: 'The type of Terraform format to execute. Options: none, check, write, strict'
     required: false
     default: 'write'
-  
+  terraformFmtCommitMessage:
+    description: 'Git commit message to use'
+    required: false
+    default: 'Updating incorrectly formatted files'
 ## ------------------------------
 outputs:
   setupVersion: #

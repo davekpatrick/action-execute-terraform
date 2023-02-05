@@ -14,11 +14,12 @@ const github      = require('@actions/github');  // Microsoft's actions github
 // ------------------------------------
 // Internal modules
 // ------------------------------------
-const getVersion     = require('./lib/get-version');
-const setupProduct   = require('./lib/setup-product');
-const runProduct     = require('./lib/run-product');
-const terraformFmt   = require('./lib/terraform-fmt');
-const gitCommit      = require('./lib/git-commit');
+const getVersion        = require('./lib/get-version');
+const setupProduct      = require('./lib/setup-product');
+const runProduct        = require('./lib/run-product');
+const terraformFmt      = require('./lib/terraform-fmt');
+const gitCommit         = require('./lib/git-commit');
+const terraformValidate = require('./lib/terraform-validate');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -84,6 +85,16 @@ const gitCommit      = require('./lib/git-commit');
     actionsCore.setFailed('No terraformFmtType input specified')
   }
   actionsCore.debug('terraformFmtType[' + terraformFmtType + ']');
+  // Terraform fmt commit message
+  const argTerraformFmtCommitMessage = actionsCore.getInput('terraformFmtCommitMessage');
+  if ( argTerraformFmtCommitMessage !== null && argTerraformFmtCommitMessage !== '' ) {
+    var terraformFmtCommitMessage = argTerraformFmtCommitMessage;
+  } else {
+    actionsCore.setFailed('No terraformFmtCommitMessage input specified')
+  }
+  // Terraform validate options
+
+
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
@@ -147,20 +158,31 @@ const gitCommit      = require('./lib/git-commit');
     if ( terraformFmtData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit
-    if ( terraformFmtData.validFormat === false && terraformFmtType === 'write' ) {
+    if ( terraformFmtData.valid === false && terraformFmtType === 'write' ) {
       actionsCore.info('Updating repository with format updates');
       let actionDetails = packageName + '@' + packageVersion;
       var gitCommitData = await gitCommit( apiToken, 
                                            actionDetails,
-                                           'Updating incorrectly formatted files',
+                                           terraformFmtCommitMessage,
                                            terraformFmtData.invalidFiles );
       if ( gitCommitData === undefined ) { return; }
-      actionsCore.info('returnData[' + JSON.stringify(gitCommitData) + ']');
+      actionsCore.debug('returnData[' + JSON.stringify(gitCommitData) + ']');
     }
   } else {
     actionsCore.info('Skipping ' + productName + ' format');
   }
   actionsCore.endGroup();
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup( productName + ' validate' ); 
+  var terraformValidateData = await terraformValidate( setupConfig['filePath'],
+                                                       configDirectory );
+  //
+
+  
+  actionsCore.endGroup();
+
+
 } catch (error) {
   // Should any error occur, the action will fail and the workflow will stop
   // Using the actions toolkit (core) package to log a message and set exit code

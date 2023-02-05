@@ -137,4 +137,17 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/invalidFormat
           terraformFmtType: 'write'
+      - name: Valid configuration code
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: 'tests/terraform/validConfig'
+          terraformFmtType: 'check'
+      - name: Invalid configuration code
+        continue-on-error: true
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: 'tests/terraform/invalidConfig'
+          terraformFmtType: 'check'
 # EOF

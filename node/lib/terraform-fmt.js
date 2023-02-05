@@ -80,7 +80,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
     'stdOut': runProductData['stdOut'],  
     'stdErr': runProductData['stdErr'],
     'exitCode': runProductData['exitCode'],
-    'validFormat': validFormat,
+    'valid': validFormat,
     'numInvalidFiles': numInvalidFiles,
     'invalidFiles': invalidFiles,
   };
