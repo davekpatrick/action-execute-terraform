@@ -146,6 +146,7 @@ jobs:
           terraformFmtType: 'write'
           terraformValidate: 'false'
       - name: Strict invalid format
+        continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
