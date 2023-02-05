@@ -40,18 +40,18 @@ module.exports = async function terraformValidate( argPathToBinary,
   if ( runProductData === undefined ) { return; }
   actionsCore.info('runProductData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');
-  if ( runProductInitData.exitCode !== 0 ) {
+  if ( runProductData.exitCode !== 0 ) {
     // Terraform validate command execution failure
     // if we have stderr, then we have a general command execution failure
     if ( runProductData.stdErr.length > 0 ) {
-      actionsCore.info('stderr[' + runProductInitData.stdErr + ']');
+      actionsCore.info('stderr[' + runProductData.stdErr + ']');
       actionsCore.setFailed('Terraform validate command execution failure');
       return;
     } 
     // Anon-zero exit code at this pint means bad configuration code
     // if we have stdout, then we have a valid JSON object
-    var runProductInitDataValid = JSON.parse(runProductData.stdOut).valid
-    if ( runProductInitDataValid === false ) {
+    let runProductDataValid = JSON.parse(runProductData.stdOut).valid
+    if ( runProductDataValid === false ) {
       actionsCore.error('Failure! The Terraform configuration code is invalid');
       actionsCore.info('Errors[' + JSON.parse(runProductData.stdOut).error_count + ']');
       actionsCore.info('Warnings[' + JSON.parse(runProductData.stdOut).warning_count + ']');
@@ -65,7 +65,7 @@ module.exports = async function terraformValidate( argPathToBinary,
     'stdOut': runProductData['stdOut'],  
     'stdErr': runProductData['stdErr'],
     'exitCode': runProductData['exitCode'],
-    'valid': runProductInitDataValid,
+    'valid': JSON.parse(runProductData.stdOut).valid,
     'version': JSON.parse(runProductData['stdOut']).format_version,
   };
 // ------------------------------------
