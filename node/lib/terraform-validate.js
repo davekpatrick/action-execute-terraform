@@ -30,13 +30,12 @@ module.exports = async function terraformValidate( argPathToBinary,
   if ( runProductData === undefined ) { return; }
   actionsCore.info('runProductData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');  
-
   // setup return data
   returnData = {
     'stdOut': runProductData['stdOut'],  
     'stdErr': runProductData['stdErr'],
     'exitCode': runProductData['exitCode'],
-    'valid': runProductData['stdOut'].JSON.parse().valid,
+    'valid': JSON.parse(runProductData['stdOut']).valid,
   };
 // ------------------------------------
 actionsCore.debug('End terraformValidate');
