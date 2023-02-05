@@ -17,9 +17,10 @@ const github      = require('@actions/github');  // Microsoft's actions github
 const getVersion        = require('./lib/get-version');
 const setupProduct      = require('./lib/setup-product');
 const runProduct        = require('./lib/run-product');
-const terraformFmt      = require('./lib/terraform-fmt');
 const gitCommit         = require('./lib/git-commit');
-const terraformValidate = require('./lib/terraform-validate');
+//
+const runTerraformFmt      = require('./lib/terraform-fmt');
+const runTerraformValidate = require('./lib/terraform-validate');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -153,9 +154,9 @@ const terraformValidate = require('./lib/terraform-validate');
   // ------------------------------------
   actionsCore.startGroup( productName + ' format' ); 
   if ( terraformFmtType !== 'none' ) {
-    var terraformFmtData = await terraformFmt( setupConfig['filePath'],
-                                               configDirectory, 
-                                               terraformFmtType);
+    var terraformFmtData = await runTerraformFmt( setupConfig['filePath'],
+                                                  configDirectory, 
+                                                  terraformFmtType);
     if ( terraformFmtData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformFmtData) + ']');
     // determine if we need create a commit
@@ -177,8 +178,8 @@ const terraformValidate = require('./lib/terraform-validate');
   // ------------------------------------
   actionsCore.startGroup( productName + ' validate' ); 
   if ( terraformValidate === true ) {
-    var terraformValidateData = await terraformValidate( setupConfig['filePath'],
-                                                        configDirectory );
+    var terraformValidateData = await runTerraformValidate( setupConfig['filePath'],
+                                                            configDirectory );
     if ( terraformValidateData === undefined ) { return; }
     actionsCore.debug('returnData[' + JSON.stringify(terraformValidateData) + ']');
   } else {
