@@ -91,6 +91,7 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/oldVersion
           terraformFmtType: 'none'
+          terraformValidate: 'false'
       - name: Invalid version
         continue-on-error: true
         uses: ./
@@ -98,6 +99,7 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/invalidVersion
           terraformFmtType: 'none'
+          terraformValidate: 'false'
       - name: Invalid version latest
         uses: ./
         with:
@@ -105,6 +107,7 @@ jobs:
           configDirectory: tests/terraform/invalidVersion
           terraformFmtType: 'none'
           versionInvalidHandling: 'latest'
+          terraformValidate: 'false'
       - name: Invalid config directory
         continue-on-error: true
         uses: ./
@@ -112,24 +115,28 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: ''
           terraformFmtType: 'check'
+          terraformValidate: 'false'
       - name: Check valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/validFormat
           terraformFmtType: 'check'
+          terraformValidate: 'false'
       - name: Check invalid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/invalidFormat
           terraformFmtType: 'check'
+          terraformValidate: 'false'
       - name: Write valid format
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/validFormat
           terraformFmtType: 'write'
+          terraformValidate: 'false'
       - name: Write invalid format
         if: ${{ inputs.commitChanges }} 
         uses: ./
@@ -137,17 +144,25 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/invalidFormat
           terraformFmtType: 'write'
+          terraformValidate: 'false'
+      - name: Strict invalid format
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: tests/terraform/invalidFormat
+          terraformFmtType: 'strict'
+          terraformValidate: 'false'
       - name: Valid configuration code
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: 'tests/terraform/validConfig'
-          terraformFmtType: 'check'
+          terraformFmtType: 'none'
       - name: Invalid configuration code
         continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: 'tests/terraform/invalidConfig'
-          terraformFmtType: 'check'
+          terraformFmtType: 'none'
 # EOF

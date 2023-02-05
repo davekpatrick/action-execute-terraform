@@ -92,8 +92,9 @@ const terraformValidate = require('./lib/terraform-validate');
   } else {
     actionsCore.setFailed('No terraformFmtCommitMessage input specified')
   }
-  // Terraform validate options
-
+  // Terraform validate 
+  const argTerraformValidate = actionsCore.getInput('terraformValidate');
+  var terraformValidate = ( argTerraformValidate === 'true' ) ? true : false;
 
   actionsCore.endGroup();
   // ------------------------------------
@@ -175,9 +176,15 @@ const terraformValidate = require('./lib/terraform-validate');
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup( productName + ' validate' ); 
-  var terraformValidateData = await terraformValidate( setupConfig['filePath'],
-                                                       configDirectory );
-  //
+  if ( terraformValidate === true ) {
+    var terraformValidateData = await terraformValidate( setupConfig['filePath'],
+                                                        configDirectory );
+    if ( terraformValidateData === undefined ) { return; }
+    actionsCore.debug('returnData[' + JSON.stringify(terraformValidateData) + ']');
+  } else {
+    actionsCore.info('Skipping ' + productName + ' validate'); 
+  }
+    //
 
   
   actionsCore.endGroup();

@@ -38,6 +38,10 @@ inputs:
     description: 'Git commit message to use'
     required: false
     default: 'Updating incorrectly formatted files'
+  terraformValidate:
+    description: 'Execute a Terraform validate'
+    required: false
+    default: 'true'
 ## ------------------------------
 outputs:
   setupVersion: #
