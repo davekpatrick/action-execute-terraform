@@ -21,6 +21,7 @@ const gitCommit         = require('./lib/git-commit');
 //
 const runTerraformFmt      = require('./lib/terraform-fmt');
 const runTerraformValidate = require('./lib/terraform-validate');
+const runTerraformInit     = require('./lib/terraform-init');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -185,8 +186,16 @@ const runTerraformValidate = require('./lib/terraform-validate');
   } else {
     actionsCore.info('Skipping ' + productName + ' validate'); 
   }
-    //
+  actionsCore.endGroup();
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup( productName + ' init' ); 
+  var terraformInitData = await runTerraformInit( setupConfig['filePath'],
+                                                  configDirectory );
+  if ( terraformInitData === undefined ) { return; }
+  actionsCore.debug('returnData[' + JSON.stringify(terraformInitData) + ']');
 
+  
   
   actionsCore.endGroup();
 
