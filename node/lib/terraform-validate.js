@@ -2,7 +2,7 @@
 // ------------------------------------
 // Node.js built-in modules
 // ------------------------------------
-const os   = require('node:os'); // Node's operating system
+// None
 // ------------------------------------
 // External modules
 // ------------------------------------
@@ -11,7 +11,6 @@ const actionsCore = require('@actions/core'); // Microsoft's actions toolkit cor
 // Internal modules
 // ------------------------------------
 const runProduct = require('./run-product.js');
-const { access } = require('node:fs');
 // ------------------------------------
 // ------------------------------------
 module.exports = async function terraformValidate( argPathToBinary, 
@@ -53,13 +52,13 @@ module.exports = async function terraformValidate( argPathToBinary,
     // if we have stdout, then we have a valid JSON object
     let runProductDataValid = JSON.parse(runProductData.stdOut).valid
     if ( runProductDataValid === false ) {
-      actionsCore.error('Failure! The Terraform configuration code is invalid');
-      actionsCore.info('Errors[' + JSON.parse(runProductData.stdOut).error_count + ']');
-      actionsCore.info('Warnings[' + JSON.parse(runProductData.stdOut).warning_count + ']');
+      actionsCore.error('The Terraform configuration code is invalid');
+      actionsCore.info('Total Errors[' + JSON.parse(runProductData.stdOut).error_count + ']');
+      actionsCore.info('Total Warnings[' + JSON.parse(runProductData.stdOut).warning_count + ']');
     }
   } else {
     // zero exit code means we have valid configuration code
-    actionsCore.info('Success! The Terraform configuration code is valid');
+    actionsCore.info('The Terraform configuration code is valid');
   }
   // setup return data
   returnData = {
@@ -69,9 +68,9 @@ module.exports = async function terraformValidate( argPathToBinary,
     'valid': JSON.parse(runProductData.stdOut).valid,
     'version': JSON.parse(runProductData['stdOut']).format_version,
   };
-// ------------------------------------
-actionsCore.debug('End terraformValidate');
-return returnData;
-// ------------------------------------
+  // ------------------------------------
+  actionsCore.debug('End terraformValidate');
+  return returnData;
+  // ------------------------------------
 }
 // EOF
