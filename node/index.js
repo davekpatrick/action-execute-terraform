@@ -15,6 +15,7 @@ const github      = require('@actions/github');  // Microsoft's actions github
 // Internal modules
 // ------------------------------------
 const getVersion        = require('./lib/get-version');
+const setVersion        = require('./lib/set-version');
 const setupProduct      = require('./lib/setup-product');
 const runProduct        = require('./lib/run-product');
 const gitCommit         = require('./lib/git-commit');
@@ -126,6 +127,17 @@ const runTerraformInit     = require('./lib/terraform-init');
   actionsCore.debug('setupConfig[' + JSON.stringify(setupConfig) + ']')
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
   actionsCore.info('filePath[' + setupConfig['filePath'] + ']')
+  // replace the version in source file
+  if ( setupConfig['requestedVersionValid'] !== true ) {
+    actionsCore.info('Replacing version[' + argSetupVersion + '] in source file with latest[' + productVersion + ']');
+    await setVersion( productName, 
+                      configDirectory,
+                      configFileName,
+                      setupConfig['version'] );
+    // 
+
+
+  }
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
@@ -195,7 +207,7 @@ const runTerraformInit     = require('./lib/terraform-init');
   if ( terraformInitData === undefined ) { return; }
   actionsCore.debug('returnData[' + JSON.stringify(terraformInitData) + ']');
 
-  
+
   
   actionsCore.endGroup();
 

@@ -55,7 +55,7 @@ module.exports = async function setupProduct( argProductName,
   let osPlatform     = getOsPlatform()
   actionsCore.debug('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
   if (argSetupVersion !== 'latest') {
-    let setupVersionValid = semver.validRange(argSetupVersion, { argIncludePrerelease, loose: true });
+    var setupVersionValid = semver.validRange(argSetupVersion, { argIncludePrerelease, loose: true });
     if (!setupVersionValid) {
       if ( argVersionInvalidHandling === 'fail' ) {
         actionsCore.setFailed('Invalid version [' + argSetupVersion + ']');
@@ -71,6 +71,7 @@ module.exports = async function setupProduct( argProductName,
       var setupVersion = argSetupVersion;
     }
   } else {
+    var setupVersionValid = true;
     var setupVersion = argSetupVersion;
   }
   // Download metadata for a release using a semver range or "latest"
@@ -146,7 +147,8 @@ module.exports = async function setupProduct( argProductName,
   returnData = {
     version: productVersion,
     dirPath: productPath,
-    filePath: productFilePath
+    filePath: productFilePath,
+    requestedVersionValid: setupVersionValid
   }
   // ------------------------------------
   actionsCore.debug('End setupProduct');

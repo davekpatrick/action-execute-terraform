@@ -32,6 +32,7 @@ module.exports = async function terraformValidate( argPathToBinary,
     actionsCore.setFailed('Terraform init command execution failure');
     return;
   }
+  actionsCore.info('stdout[' + runProductInitData.stdOut + ']');
   // terraform validate -json
   actionsCore.info('Terraform syntax and configuration validation');
   var runProductData = await runProduct( argPathToBinary,
