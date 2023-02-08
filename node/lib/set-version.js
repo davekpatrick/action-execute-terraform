@@ -48,7 +48,7 @@ module.exports = async function setVersion( argProductName,
   // locate version declaration
   var setupFileDataReplaced = setupFileData.replace(versionRegex, '$1' + argSetupVersion + '$3');
   try {
-    fs.writeFile(setupFile, setupFileDataReplaced, 'utf8' ) 
+    fs.writeFile(setupFile, setupFileDataReplaced, { encoding: "utf8" } ) 
   } catch (error) {
     actionsCore.setFailed('Unable to write setup file[' + setupFile + ']' + error);
     return;
