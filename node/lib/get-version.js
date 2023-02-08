@@ -24,7 +24,7 @@ module.exports = async function getVersion( argProductName,
   actionsCore.info('Locating ' + argProductName + ' version to install');
   if ( argProductName === 'terraform' ) {                   
     // doc: https://developer.hashicorp.com/terraform/language/settings    
-    var versionRegex = /terraform.*{(?:\s)*required_version\s*=\s*["\'](.*)["\']/;
+    var versionRegex = /terraform\s{[\s|\S]+?required_version\s=\s["']{1}(.*)["']{1}[^}]+}/;
   } else {
     actionsCore.setFailed('Unsupported product[' + argProductName + ']');
     return;
