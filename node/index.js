@@ -128,6 +128,7 @@ const runTerraformInit     = require('./lib/terraform-init');
   actionsCore.info('setupVersion[' + setupConfig['version'] + ']')
   actionsCore.info('filePath[' + setupConfig['filePath'] + ']')
   // replace the version in source file
+  actionsCore.info('requestedVersionValid[' + setupConfig['requestedVersionValid'] + ']')
   if ( setupConfig['requestedVersionValid'] !== true ) {
     actionsCore.warning('Replacing requiredVersion[' + requiredVersion + '] with setupVersion[' + setupConfig['version'] + ']');
     await setVersion( productName, 

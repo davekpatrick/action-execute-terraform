@@ -50,7 +50,7 @@ module.exports = async function setVersion( argProductName,
   try {
     fs.writeFile(setupFile, setupFileDataReplaced, 'utf8' ) 
   } catch (error) {
-    actionsCore.setFailed('Unable to write setup file[' + setupFile + ']');
+    actionsCore.setFailed('Unable to write setup file[' + setupFile + ']' + error);
     return;
   }
   actionsCore.info('setupFileDataReplaced[' + setupFileDataReplaced + ']');
