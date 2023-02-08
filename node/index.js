@@ -129,14 +129,11 @@ const runTerraformInit     = require('./lib/terraform-init');
   actionsCore.info('filePath[' + setupConfig['filePath'] + ']')
   // replace the version in source file
   if ( setupConfig['requestedVersionValid'] !== true ) {
-    actionsCore.info('Replacing version[' + argSetupVersion + '] in source file with latest[' + productVersion + ']');
+    actionsCore.warning('Replacing requiredVersion[' + requiredVersion + '] with setupVersion[' + setupConfig['version'] + ']');
     await setVersion( productName, 
                       configDirectory,
                       configFileName,
                       setupConfig['version'] );
-    // 
-
-
   }
   actionsCore.endGroup();
   // ------------------------------------
