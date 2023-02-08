@@ -53,7 +53,7 @@ module.exports = async function setVersion( argProductName,
     actionsCore.setFailed('Unable to write setup file[' + setupFile + ']' + error);
     return;
   }
-  actionsCore.info('setupFileDataReplaced[' + setupFileDataReplaced + ']');
+  actionsCore.debug('setupFileDataReplaced[' + setupFileDataReplaced + ']');
   // ------------------------------------
   actionsCore.debug('End setVersion');
   return requiredVersion;

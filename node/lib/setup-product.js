@@ -55,8 +55,9 @@ module.exports = async function setupProduct( argProductName,
   let osPlatform     = getOsPlatform()
   actionsCore.debug('osPlatform[' + osPlatform + '] osArchitecture[' + osArchitecture + ']');
   if (argSetupVersion !== 'latest') {
-    var setupVersionValid = semver.validRange(argSetupVersion, { argIncludePrerelease, loose: true });
-    if (!setupVersionValid) {
+    var setupVersionRange = semver.validRange(argSetupVersion, { argIncludePrerelease, loose: true });
+    if ( setupVersionRange == null) {
+      var setupVersionValid = false;
       if ( argVersionInvalidHandling === 'fail' ) {
         actionsCore.setFailed('Invalid version [' + argSetupVersion + ']');
         return;
@@ -68,6 +69,7 @@ module.exports = async function setupProduct( argProductName,
         return;
       }
     } else {
+      var setupVersionValid = true;
       var setupVersion = argSetupVersion;
     }
   } else {
@@ -118,7 +120,7 @@ module.exports = async function setupProduct( argProductName,
     } else {
       var setupExtractSourceFilePath = downloadFilePath;
     }
-    actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
+    actionsCore.debug('setupExtractSourceFilePath[' + setupExtraSet terraform versionctSourceFilePath + ']');
     extractPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, undefined );
     actionsCore.debug('Extracted to extractPath[' + extractPath + ']');
     // cache the extracted product
