@@ -33,7 +33,7 @@ module.exports = async function terraformInit( argPathToBinary,
    actionsCore.setFailed('Terraform init failure');
    return;
  }
- actionsCore.info('stdout[' + runProductInitData.stdOut + ']');
+ actionsCore.info('stdout[' + runProductData.stdOut + ']');
 
 
   // setup return data
