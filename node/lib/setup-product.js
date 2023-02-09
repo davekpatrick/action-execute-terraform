@@ -73,7 +73,7 @@ module.exports = async function setupProduct( argProductName,
       var setupVersion = argSetupVersion;
     }
   } else {
-    var setupVersionValid = true;
+    var setupVersionValid = false;
     var setupVersion = argSetupVersion;
   }
   // Download metadata for a release using a semver range or "latest"
