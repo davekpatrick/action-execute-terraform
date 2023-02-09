@@ -79,6 +79,7 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: |
           ls -lR
+          set
       - name: Debug
         if: ${{ runner.os == 'Windows' }}
         shell: powershell
