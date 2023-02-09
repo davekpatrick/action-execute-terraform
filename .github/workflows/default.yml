@@ -100,11 +100,19 @@ jobs:
           configDirectory: tests/terraform/invalidVersion
           terraformFmtType: 'none'
           terraformValidate: 'false'
-      - name: Invalid version latest
+      - name: Invalid version use latest
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: tests/terraform/invalidVersion
+          terraformFmtType: 'none'
+          versionInvalidHandling: 'latest'
+          terraformValidate: 'false'
+      - name: Invalid version latest string
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: tests/terraform/invalidVersionLatest
           terraformFmtType: 'none'
           versionInvalidHandling: 'latest'
           terraformValidate: 'false'
@@ -173,4 +181,12 @@ jobs:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: 'tests/terraform/invalidConfigResource'
           terraformFmtType: 'none'
+      - name: Valid providers configuration code
+        continue-on-error: true
+        uses: ./
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: 'tests/terraform/validConfigProviders'
+          terraformFmtType: 'none'
+    
 # EOF
