@@ -179,14 +179,20 @@ jobs:
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: 'tests/terraform/invalidConfigResource'
+          configDirectory: 'tests/terraform/invalidResource'
           terraformFmtType: 'none'
       - name: Valid providers configuration code
-        continue-on-error: true
         uses: ./
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
-          configDirectory: 'tests/terraform/validConfigProviders'
-          terraformFmtType: 'none'
+          configDirectory: 'tests/terraform/validProviders'
+      - name: Valid backend cloud
+        uses: ./
+        env:
+          TF_CLOUD_ORGANIZATION: ${{ secrets.TF_CLOUD_ORGANIZATION }}
+          TF_WORKSPACE: ${{ secrets.TF_WORKSPACE }}
+        with:
+          apiToken: ${{ secrets.GITHUB_TOKEN }}
+          configDirectory: 'tests/terraform/validBackendCloud'
     
 # EOF
