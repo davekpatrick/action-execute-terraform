@@ -23,6 +23,7 @@ const gitCommit         = require('./lib/git-commit');
 const runTerraformFmt      = require('./lib/terraform-fmt');
 const runTerraformValidate = require('./lib/terraform-validate');
 const runTerraformInit     = require('./lib/terraform-init');
+const runTerraformApply    = require('./lib/terraform-apply');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -208,6 +209,21 @@ const runTerraformInit     = require('./lib/terraform-init');
 
   
   actionsCore.endGroup();
+  // ------------------------------------
+  // ------------------------------------
+  actionsCore.startGroup( productName + ' apply' ); 
+  var terraformApplyData = await runTerraformApply( setupConfig['filePath'],
+                                                   configDirectory,
+                                                   'noPlan' );
+  if ( terraformApplyData === undefined ) { return; }
+  actionsCore.debug('returnData[' + JSON.stringify(terraformApplyData) + ']');
+
+
+
+  
+  actionsCore.endGroup();
+
+
 
 
 } catch (error) {
