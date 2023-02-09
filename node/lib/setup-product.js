@@ -120,7 +120,7 @@ module.exports = async function setupProduct( argProductName,
     } else {
       var setupExtractSourceFilePath = downloadFilePath;
     }
-    actionsCore.debug('setupExtractSourceFilePath[' + setupExtraSet terraform versionctSourceFilePath + ']');
+    actionsCore.debug('setupExtractSourceFilePath[' + setupExtractSourceFilePath + ']');
     extractPath = await actionsToolCache.extractZip(setupExtractSourceFilePath, undefined );
     actionsCore.debug('Extracted to extractPath[' + extractPath + ']');
     // cache the extracted product
