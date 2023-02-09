@@ -35,7 +35,7 @@ module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, a
   if ( runProductData.exitCode !== 0 && ( argType === 'write' || argType === 'strict' ) ) {
     // if we are these modes and have a non-zero exit code then ... a problem has occurred
     actionsCore.info('stderr[' + runProductData.stdErr + ']');
-    actionsCore.setFailed('Terraform fmt command execution failure');
+    actionsCore.setFailed('Terraform command execution failure');
     return;
   }
   // Format output into a list, removing empty items

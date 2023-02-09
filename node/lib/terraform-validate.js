@@ -29,7 +29,7 @@ module.exports = async function terraformValidate( argPathToBinary,
     // 1: bad configuration code
     // 2: a general command execution failure
     actionsCore.info('stderr[' + runProductInitData.stdErr + ']');
-    actionsCore.setFailed('Terraform init command execution failure');
+    actionsCore.setFailed('Terraform command execution failure');
     return;
   }
   actionsCore.info('stdout[' + runProductInitData.stdOut + ']');
@@ -46,7 +46,7 @@ module.exports = async function terraformValidate( argPathToBinary,
     // if we have stderr, then we have a general command execution failure
     if ( runProductData.stdErr.length > 0 ) {
       actionsCore.info('stderr[' + runProductData.stdErr + ']');
-      actionsCore.setFailed('Terraform validate command execution failure');
+      actionsCore.setFailed('Terraform command execution failure');
       return;
     } 
     // Anon-zero exit code at this pint means bad configuration code
