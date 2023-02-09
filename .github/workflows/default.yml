@@ -191,6 +191,7 @@ jobs:
         env:
           TF_CLOUD_ORGANIZATION: ${{ secrets.TF_CLOUD_ORGANIZATION }}
           TF_WORKSPACE: ${{ secrets.TF_WORKSPACE }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         with:
           apiToken: ${{ secrets.GITHUB_TOKEN }}
           configDirectory: 'tests/terraform/validBackendCloud'
