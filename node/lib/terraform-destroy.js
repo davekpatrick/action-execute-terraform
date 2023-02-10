@@ -13,16 +13,16 @@ const actionsCore = require('@actions/core'); // Microsoft's actions toolkit cor
 const runProduct = require('./run-product.js');
 // ------------------------------------
 // ------------------------------------
-module.exports = async function terraformPlan( argPathToBinary, 
-                                                argRunDirectory,
-                                                argType ) {
+module.exports = async function terraformDestroy( argPathToBinary, 
+                                                  argRunDirectory,
+                                                  argType ) {
   actionsCore.debug('Start terraformApply');
   actionsCore.info('type[' + argType + ']');
   // Argument validation
-  if ( argType === 'apply' ) {
-    var runArguments = ['plan', '-input=false', '-detailed-exitcode', '-json'];
-  } else if ( argType === 'destroy' ) {
-    var runArguments = ['plan', '-destroy', '-input=false', '-detailed-exitcode', '-json'];
+  if ( argType === 'noPlan' ) {
+    var runArguments = ['apply', '-destroy', '-auto-approve', '-input=false', '-json'];
+  } else if ( argType === 'plan' ) {
+    var runArguments = ['apply', '-destroy', '-auto-approve', '-input=false', '-json', 'default.tfplan' ];
   }  else {
     actionsCore.setFailed('Invalid type [' + argType + ']');
     return;
@@ -35,8 +35,7 @@ module.exports = async function terraformPlan( argPathToBinary,
   if ( runProductData === undefined ) { return; }
   actionsCore.debug('runProductData[' + JSON.stringify(runProductData) + ']');
   actionsCore.info('exitcode[' + runProductData.exitCode + ']');
-  if ( runProductData.exitCode === 1 ) {
-    // Note: -detailed-exitcode is used, so we can get a 1 exit code
+  if ( runProductData.exitCode !== 0 ) {
     // if we have stderr, then we have a general command execution failure
     if ( runProductData.stdErr.length > 0 ) {
       actionsCore.info('stderr[' + runProductData.stdErr + ']');
@@ -45,7 +44,7 @@ module.exports = async function terraformPlan( argPathToBinary,
     } 
   } else {
     // zero exit code means we have a successful execution
-    actionsCore.info('The Terraform plan completed successfully');
+    actionsCore.info('The Terraform destroy completed successfully');
   }
   // setup return data
   returnData = {
