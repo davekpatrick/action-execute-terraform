@@ -20,9 +20,9 @@ module.exports = async function terraformPlan( argPathToBinary,
   actionsCore.info('type[' + argType + ']');
   // Argument validation
   if ( argType === 'apply' ) {
-    var runArguments = ['plan', '-input=false', '-detailed-exitcode', '-json'];
+    var runArguments = ['plan', '-input=false', '-detailed-exitcode', '-out=default.tfplan'];
   } else if ( argType === 'destroy' ) {
-    var runArguments = ['plan', '-destroy', '-input=false', '-detailed-exitcode', '-json'];
+    var runArguments = ['plan', '-destroy', '-input=false', '-detailed-exitcode', '-out=default.tfplan'];
   }  else {
     actionsCore.setFailed('Invalid type [' + argType + ']');
     return;
