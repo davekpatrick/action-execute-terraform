@@ -16,7 +16,7 @@ const runProduct = require('./run-product.js');
 module.exports = async function terraformPlan( argPathToBinary, 
                                                 argRunDirectory,
                                                 argType ) {
-  actionsCore.debug('Start terraformApply');
+  actionsCore.debug('Start terraformPlan');
   actionsCore.info('type[' + argType + ']');
   // Argument validation
   if ( argType === 'apply' ) {
@@ -28,7 +28,7 @@ module.exports = async function terraformPlan( argPathToBinary,
     return;
   }
   
-  actionsCore.info('Terraform apply');
+  actionsCore.info('Terraform plan');
   var runProductData = await runProduct( argPathToBinary,
                                          argRunDirectory,
                                          runArguments );
@@ -54,7 +54,7 @@ module.exports = async function terraformPlan( argPathToBinary,
     'exitCode': runProductData['exitCode'],
   };
   // ------------------------------------
-  actionsCore.debug('End terraformApply');
+  actionsCore.debug('End terraformPlan');
   return returnData;
   // ------------------------------------
 }
