@@ -32,8 +32,11 @@ module.exports = async function terraformInit( argPathToBinary,
    actionsCore.info('stderr[' + runProductData.stdErr + ']');
    actionsCore.setFailed('Terraform init failure');
    return;
- }
- actionsCore.info('stdout[' + runProductData.stdOut + ']');
+  } else {
+    // zero exit code means we have a successful execution
+    actionsCore.info('The Terraform init completed successfully');
+  }
+
 
 
   // setup return data

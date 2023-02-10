@@ -15,7 +15,7 @@ const runProduct = require('./run-product.js');
 // ------------------------------------
 module.exports = async function terraformFmt(argPathToBinary, argRunDirectory, argType) {
   actionsCore.debug('Start terraformFmt');
-  actionsCore.info('Format type[' + argType + ']');
+  actionsCore.info('type[' + argType + ']');
   // setup variables
   var outputSplitString = '\n';
   // Argument validation

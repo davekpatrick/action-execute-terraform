@@ -17,7 +17,7 @@ module.exports = async function terraformApply( argPathToBinary,
                                                 argRunDirectory,
                                                 argType ) {
   actionsCore.debug('Start terraformApply');
-  actionsCore.info('Format type[' + argType + ']');
+  actionsCore.info('type[' + argType + ']');
   // Argument validation
   if ( argType === 'noPlan' ) {
     // terraform apply -auto-approve -input=false -json
