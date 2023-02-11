@@ -25,7 +25,6 @@ const runTerraformValidate = require('./lib/terraform-validate');
 const runTerraformInit     = require('./lib/terraform-init');
 const runTerraformPlan     = require('./lib/terraform-plan');
 const runTerraformApply    = require('./lib/terraform-apply');
-const runTerraformDestroy  = require('./lib/terraform-destroy');
 // ------------------------------------
 // Main
 // ------------------------------------
@@ -208,8 +207,6 @@ const runTerraformDestroy  = require('./lib/terraform-destroy');
   if ( terraformInitData === undefined ) { return; }
   actionsCore.debug('returnData[' + JSON.stringify(terraformInitData) + ']');
 
-
-  
   actionsCore.endGroup();
   // ------------------------------------
   // ------------------------------------
@@ -225,8 +222,7 @@ const runTerraformDestroy  = require('./lib/terraform-destroy');
   // ------------------------------------
   actionsCore.startGroup( productName + ' apply' ); 
   var terraformApplyData = await runTerraformApply( setupConfig['filePath'],
-                                                   configDirectory,
-                                                   'noPlan' );
+                                                   configDirectory );
   if ( terraformApplyData === undefined ) { return; }
   actionsCore.info('returnData[' + JSON.stringify(terraformApplyData) + ']');
   
@@ -236,7 +232,7 @@ const runTerraformDestroy  = require('./lib/terraform-destroy');
   actionsCore.startGroup( productName + ' destroy' ); 
   var terraformDestroyData = await runTerraformDestroy( setupConfig['filePath'],
                                                       configDirectory,
-                                                      'noPlan' );
+                                                      'destroy' );
   if ( terraformDestroyData === undefined ) { return; }
   actionsCore.info('returnData[' + JSON.stringify(terraformDestroyData) + ']');
   

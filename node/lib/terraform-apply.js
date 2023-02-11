@@ -15,22 +15,32 @@ const runProduct = require('./run-product.js');
 // ------------------------------------
 module.exports = async function terraformApply( argPathToBinary, 
                                                 argRunDirectory,
-                                                argType ) {
-  actionsCore.debug('Start terraformApply');
+                                                argType = 'apply',
+                                                argWithPlan = false ) {
+  const functionName = terraformApply.name;
+  actionsCore.debug('Start ' + functionName) ;
+
   actionsCore.info('type[' + argType + ']');
   // Argument validation
-  if ( argType === 'noPlan' ) {
+  if ( argType.toLowerCase() === 'apply' ) {
     // terraform apply -auto-approve -input=false -json
     var runArguments = ['apply', '-auto-approve', '-input=false', '-json'];
-  } else if ( argType === 'plan' ) {
+  } else if ( argType.toLowerCase() === 'destroy' ) {
      // terraform apply -auto-approve -input=false -json
-    var runArguments = ['apply', '-auto-approve', '-input=false', '-json'];
+    var runArguments = ['apply', '-destroy', '-auto-approve', '-input=false', '-json'];
   }  else {
     actionsCore.setFailed('Invalid type [' + argType + ']');
     return;
   }
-  
-  actionsCore.info('Terraform apply');
+  // ------------------------------------
+  // ------------------------------------
+  // If we have a plan file, then we use it
+  if ( argWithPlan === true ) {
+    runArguments.push('default.tfplan');
+  }
+
+
+  actionsCore.info('Terraform ' + argType + ');
   var runProductData = await runProduct( argPathToBinary,
                                          argRunDirectory,
                                          runArguments );
@@ -46,7 +56,7 @@ module.exports = async function terraformApply( argPathToBinary,
     } 
   } else {
     // zero exit code means we have a successful execution
-    actionsCore.info('The Terraform apply completed successfully');
+    actionsCore.info( 'The Terraform ' + argType + ' completed successfully' );
   }
   // setup return data
   returnData = {
@@ -55,7 +65,7 @@ module.exports = async function terraformApply( argPathToBinary,
     'exitCode': runProductData['exitCode'],
   };
   // ------------------------------------
-  actionsCore.debug('End terraformApply');
+  actionsCore.debug( 'End ' + functionName ) ;
   return returnData;
   // ------------------------------------
 }
