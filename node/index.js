@@ -230,7 +230,7 @@ const runTerraformApply    = require('./lib/terraform-apply');
   // ------------------------------------
   // ------------------------------------
   actionsCore.startGroup( productName + ' destroy' ); 
-  var terraformDestroyData = await runTerraformDestroy( setupConfig['filePath'],
+  var terraformDestroyData = await runTerraformApply( setupConfig['filePath'],
                                                       configDirectory,
                                                       'destroy' );
   if ( terraformDestroyData === undefined ) { return; }
