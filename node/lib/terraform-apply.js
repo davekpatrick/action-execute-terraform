@@ -40,7 +40,7 @@ module.exports = async function terraformApply( argPathToBinary,
   }
 
 
-  actionsCore.info('Terraform ' + argType + ');
+  actionsCore.info('Terraform ' + argType);
   var runProductData = await runProduct( argPathToBinary,
                                          argRunDirectory,
                                          runArguments );
