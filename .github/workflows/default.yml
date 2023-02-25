@@ -26,16 +26,18 @@ jobs:
       with:
         node-version: ${{ matrix.nodeVersion }}
     - uses: actions/checkout@v3
-    - name: Detach HEAD
-      run: |
-         git checkout --detach 
-         echo "--------------------------------------------"
-         git status
-         echo "--------------------------------------------"
     - name: Install dependencies
       run: |
         cd node
         npm install
+    - name: Validate
+      run: |
+        cd node
+        npm run validate
+    - name: Format
+      run: |
+        cd node
+        npm run format
     - name: Compile
       run: |
         cd node
