@@ -10,10 +10,10 @@ workflow:
 - any: ['.github/**/*']
 #
 project:
-- any: ['actions.yml']
+- any: ['actions.yml', 'node/package.json']
 #
 code:
-- any: [ 'actions.yml', 'node/package.json', 'node/**/*.js']
+- any: ['actions.yml', 'node/package.json', 'node/**/*']
 #
 documentation:
 - any: ['**/*.md']
