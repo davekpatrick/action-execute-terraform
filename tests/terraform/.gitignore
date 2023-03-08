@@ -3,24 +3,28 @@
 #     - Product subdirector specific configuration
 # doc: https://git-scm.com/docs/gitignore
 # ---------------------------------------------------
-#BOF
+# BOF
 # ---------------------------------------------------
 # Product: Hashicorp Terraform
 # ---------------------------------------------------
 **/.terraform/*
 # Crash log files
 crash.log
+crash.*.log
 # State files
 **/.terraform.lock.hcl
 **/*.tfstate
 **/*.tfstate.*
-# Ignore override files as they are used to override resources locally
+# Override files as they are used to "override" resources locally
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+# CLI configuration files
+.terraformrc
+terraform.rc
 # Provider authenication files
 auth.json
 # ---------------------------------------------------
 # ---------------------------------------------------
-#EOF
+# EOF
