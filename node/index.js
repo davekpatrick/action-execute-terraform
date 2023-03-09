@@ -249,7 +249,7 @@ const runTerraformApply = require('./lib/terraform-apply')
         'returnData[' + JSON.stringify(terraformValidateData) + ']'
       )
       // ensure we have valid configuration
-      if ( terraformValidateData.valid !== true ) {
+      if (terraformValidateData.valid !== true) {
         return
       }
     } else {
