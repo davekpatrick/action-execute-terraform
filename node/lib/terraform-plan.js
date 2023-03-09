@@ -19,6 +19,8 @@ module.exports = async function terraformPlan(
   argType
 ) {
   actionsCore.debug('Start terraformPlan')
+  //
+  actionsCore.info('Terraform plan')
   actionsCore.info('type[' + argType + ']')
   // Argument validation
   var runArguments = []
@@ -41,8 +43,6 @@ module.exports = async function terraformPlan(
     actionsCore.setFailed('Invalid type [' + argType + ']')
     return
   }
-
-  actionsCore.info('Terraform plan')
   var runProductData = await runProduct(
     argPathToBinary,
     argRunDirectory,

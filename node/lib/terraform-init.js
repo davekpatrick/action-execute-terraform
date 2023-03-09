@@ -18,7 +18,7 @@ module.exports = async function terraformInit(
   argRunDirectory
 ) {
   actionsCore.debug('Start terraformInit')
-  // terraform init
+  //
   actionsCore.info('Terraform initialization')
   let runProductData = await runProduct(argPathToBinary, argRunDirectory, [
     'init',

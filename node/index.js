@@ -248,6 +248,10 @@ const runTerraformApply = require('./lib/terraform-apply')
       actionsCore.debug(
         'returnData[' + JSON.stringify(terraformValidateData) + ']'
       )
+      // ensure we have valid configuration
+      if ( terraformValidateData.valid !== true ) {
+        return
+      }
     } else {
       actionsCore.info('Skipping ' + productName + ' validate')
     }

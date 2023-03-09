@@ -61,7 +61,7 @@ module.exports = async function terraformValidate(
     }
     // Anon-zero exit code at this pint means bad configuration code
     // if we have stdout, then we have a valid JSON object
-    let runProductDataValid = JSON.parse(runProductData.stdOut).valid
+    var runProductDataValid = JSON.parse(runProductData.stdOut).valid
     if (runProductDataValid === false) {
       actionsCore.error('The Terraform configuration code is invalid')
       actionsCore.info(
@@ -82,7 +82,7 @@ module.exports = async function terraformValidate(
     stdOut: runProductData['stdOut'],
     stdErr: runProductData['stdErr'],
     exitCode: runProductData['exitCode'],
-    valid: JSON.parse(runProductData.stdOut).valid,
+    valid: runProductDataValid,
     version: JSON.parse(runProductData['stdOut']).format_version,
   }
   // ------------------------------------
