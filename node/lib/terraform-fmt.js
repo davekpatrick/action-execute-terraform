@@ -19,6 +19,7 @@ module.exports = async function terraformFmt(
   argType
 ) {
   actionsCore.debug('Start terraformFmt')
+  //
   actionsCore.info('type[' + argType + ']')
   // setup variables
   var outputSplitString = '\n'

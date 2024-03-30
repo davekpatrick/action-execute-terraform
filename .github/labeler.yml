@@ -13,7 +13,7 @@ project:
 - any: ['actions.yml', 'node/package.json']
 #
 code:
-- any: ['actions.yml', 'node/package.json', 'node/**/*']
+- any: ['node/**/*']
 #
 documentation:
 - any: ['**/*.md']
