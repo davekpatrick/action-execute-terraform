@@ -1,4 +1,4 @@
-
+# BOF
 # Add 'repo' label to any root file changes
 repo:
 - '*'

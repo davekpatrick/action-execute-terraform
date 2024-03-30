@@ -3,7 +3,6 @@
 #
 # BOF
 ---
-
 name: Labeler
 run-name: Pull Request Labeler
 on: [ pull_request ]

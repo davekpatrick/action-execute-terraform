@@ -1,4 +1,4 @@
-# GitHub Actions: Execute Terraform
+# GitHub Action: Execute Terraform
 
 This GitHub Action used to setup and execute Hashicorp Terraform
 
@@ -21,3 +21,4 @@ uses: davekpatrick/action-release-version@0.1.0
 with:
   apiToken: ${{ secret.GITHUB_TOKEN }}
 ```
+<!-- EOF -->
